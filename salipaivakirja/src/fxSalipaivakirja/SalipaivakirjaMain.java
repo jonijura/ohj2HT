@@ -3,8 +3,8 @@ package fxSalipaivakirja;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.Pane;
 
 
 /**
@@ -15,15 +15,27 @@ import javafx.fxml.FXMLLoader;
 public class SalipaivakirjaMain extends Application {
 	@Override
 	public void start(Stage primaryStage) {
-		try {
-			BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("SalipaivakirjaGUIView.fxml"));
-			Scene scene = new Scene(root);
-			scene.getStylesheets().add(getClass().getResource("salipaivakirja.css").toExternalForm());
-			primaryStage.setScene(scene);
-			primaryStage.show();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+	    try {
+	        FXMLLoader ldr = new FXMLLoader(getClass().getResource("SalipaivakirjaGUIView.fxml")); // korjaa tiedostonimi
+	        final Pane root = (Pane)ldr.load();
+	        final SalipaivakirjaGUIController salipaivakirjaCtrl = (SalipaivakirjaGUIController)ldr.getController(); // korjaa nimet
+	        
+	        final Scene scene = new Scene(root);
+	        scene.getStylesheets().add(getClass().getResource("salipaivakirja.css").toExternalForm()); // korjaa tiedostonimi
+	        primaryStage.setScene(scene);
+	        primaryStage.setTitle("Salipaivakirja"); // korjaa title
+	        
+	        // Platform.setImplicitExit(false); // jos tämän laittaa, pitää itse sulkea
+	        
+	        primaryStage.setOnCloseRequest((event) -> {
+	            // Kutsutaan voikoSulkea-metodia
+	            if ( !salipaivakirjaCtrl.voikoSulkea() ) event.consume(); // korjaa nimi
+	        });
+	        
+	        primaryStage.show();
+	    } catch(Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 	
 	/**
