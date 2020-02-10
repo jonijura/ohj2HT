@@ -1,21 +1,35 @@
 package fxSalipaivakirja;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ChoiceBox;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import fi.jyu.mit.fxgui.*;
 
 /**
  * luokka käyttöliittymän tapahtumien hoitamiseksi
  * 
- * @author Joona R�ty -jonijura
+ * @author Joona R�ty -jonijura
  * @version 17.1.2020
  *
  */
-public class SalipaivakirjaGUIController {
+public class SalipaivakirjaGUIController implements Initializable{
 
+    ObservableList<String> list = FXCollections.observableArrayList("Kyykky","Penkki");
+    
+    @FXML
+    private ChoiceBox<String> kuvaaja1Valikko;
+    @FXML
+    private ChoiceBox<String> kuvaaja2Valikko;
+    
 	/**
-	 * Käsitellään uuden merkinn�n lisääminen
+	 * Käsitellään uuden merkinn�n lisääminen
 	 */
 	@FXML
 	private void handleUusiMerkinta() {
@@ -40,7 +54,7 @@ public class SalipaivakirjaGUIController {
 	}
 
 	/**
-	 * Käsitellään merkinn�n muokkaaminen
+	 * Käsitellään merkinn�n muokkaaminen
 	 */
 	@FXML
 	private void handleMuokkaaMerkintaa() {
@@ -81,5 +95,12 @@ public class SalipaivakirjaGUIController {
 		tallenna();
 		return true;
 	}
+
+    @Override
+    public void initialize(URL arg0, ResourceBundle arg1) {
+        // TODO Auto-generated method stub
+        kuvaaja1Valikko.setItems(list);
+        kuvaaja2Valikko.setItems(list);
+    }
 
 }
