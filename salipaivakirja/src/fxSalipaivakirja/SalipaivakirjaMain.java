@@ -8,7 +8,7 @@ import javafx.scene.layout.Pane;
 
 
 /**
- * @author jonijura
+ * @author Joona Räty -jonijura
  * @version 17.1.2020
  *
  */

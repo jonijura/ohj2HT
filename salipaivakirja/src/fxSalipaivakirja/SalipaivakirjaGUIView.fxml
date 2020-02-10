@@ -35,17 +35,21 @@
           <Menu mnemonicParsing="false" text="Tiedosto">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleTallenna" text="Tallenna" />
-                  <MenuItem mnemonicParsing="false" text="Vertaa..." />
+                  <MenuItem mnemonicParsing="false" onAction="#handleVertaa" text="Vertaa..." />
                   <MenuItem mnemonicParsing="false" onAction="#handleLopeta" text="Lopeta" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Muokkaa">
             <items>
-              <MenuItem mnemonicParsing="false" text="Uusi merkintä..." />
-                  <MenuItem mnemonicParsing="false" text="Muokkaa merkintää..." />
+              <MenuItem mnemonicParsing="false" onAction="#handleUusiMerkinta" text="Uusi merkintä..." />
+                  <MenuItem mnemonicParsing="false" onAction="#handleMuokkaaMerkintaa" text="Muokkaa merkintää..." />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Apua" />
+          <Menu mnemonicParsing="false" text="Apua">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleApua" text="Apua" />
+            </items>
+          </Menu>
         </menus>
       </MenuBar>
    </top>
