@@ -63,7 +63,7 @@
             </Label>
             <TextField promptText="etsi" />
             <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="129.0" text="Salitreenit" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS" />
-            <ListChooser rivit="ke 15.1&#10;pe 17.1&#10;su19.1" VBox.vgrow="ALWAYS">
+            <ListChooser fx:id="treeniValikko" rivit="ke 15.1&#10;pe 17.1&#10;su19.1" VBox.vgrow="ALWAYS">
                <padding>
                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                </padding>
@@ -89,7 +89,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </Label>
-            <StringGrid rivit="ke 15.1|sarjoja|toistoja|paino&#10;kyykky|4|8|90&#10;reiden koukistus|3|10|50&#10;reiden ojennus|3|10|50&#10;askelkyykky|3|10|40&#10;pohkeet|3|15|70&#10;">
+            <StringGrid fx:id="stringGridTreeni" rivit="ke 15.1|sarjoja|toistoja|paino&#10;kyykky|4|8|90&#10;reiden koukistus|3|10|50&#10;reiden ojennus|3|10|50&#10;askelkyykky|3|10|40&#10;pohkeet|3|15|70&#10;">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>

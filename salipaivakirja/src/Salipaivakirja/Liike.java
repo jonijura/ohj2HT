@@ -80,7 +80,7 @@ public class Liike {
     public void taytaLiikeTiedoilla() {
         liikkeenNimi = "leuanveto"+rand(100,999);
     }
-
+    
 
     /**
      * @param args ei kaytossa
@@ -98,6 +98,20 @@ public class Liike {
         liike2.tulosta(System.out);
         liike2.taytaLiikeTiedoilla();
         liike2.tulosta(System.out);
+    }
+
+    /**
+     * @return liike_id
+     */
+    public int getLiike_id() {
+        return liike_id;
+    }
+
+    /**
+     * @return liikkeen nimi
+     */
+    public String getLiikkeenNimi() {
+        return liikkeenNimi;
     }
 
 }

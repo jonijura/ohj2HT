@@ -36,7 +36,7 @@ public class Liikkeet {
 
             System.out.println("==============Liikkeet testi==========");
 
-            for (int i = 0; i < liikkeet.getLkm(); i++) {
+            for (int i = 0; i < liikkeet.getlkm(); i++) {
                 Liike liike = liikkeet.anna(i);
                 System.out.println("liikkeen nro: " + i);
                 liike.tulosta(System.out);
@@ -84,7 +84,7 @@ public class Liikkeet {
     /**
      * @return lukumaara
      */
-    public int getLkm() {
+    public int getlkm() {
         return lkm;
     }
 

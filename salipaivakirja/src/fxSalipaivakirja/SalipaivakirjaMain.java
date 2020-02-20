@@ -1,5 +1,6 @@
 package fxSalipaivakirja;
 	
+import Salipaivakirja.Spvk;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -8,7 +9,7 @@ import javafx.scene.layout.Pane;
 
 
 /**
- * @author Joona R�ty -jonijura
+ * @author Joona R�ty -jonijura
  * @version 17.1.2020
  *
  */
@@ -26,6 +27,9 @@ public class SalipaivakirjaMain extends Application {
 	        primaryStage.setTitle("Salipaivakirja"); // korjaa title
 	        
 	        // Platform.setImplicitExit(false); // jos tämän laittaa, pitää itse sulkea
+	        
+	        Spvk spvk = new Spvk();
+	        salipaivakirjaCtrl.setSpvk(spvk);
 	        
 	        primaryStage.setOnCloseRequest((event) -> {
 	            // Kutsutaan voikoSulkea-metodia
