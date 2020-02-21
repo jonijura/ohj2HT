@@ -29,21 +29,25 @@ public class Liikkeet {
         liike3.rekisteroi();
         liike3.taytaLiikeTiedoilla();
 
-        try {
-            liikkeet.lisaa(liike1);
-            liikkeet.lisaa(liike2);
-            liikkeet.lisaa(liike3);
+        liikkeet.lisaa(liike1);
+        System.out.println(liikkeet.taulukonKoko());
+        liikkeet.lisaa(liike2);
+        System.out.println(liikkeet.taulukonKoko());
+        liikkeet.lisaa(liike3);
+        System.out.println(liikkeet.taulukonKoko());
 
-            System.out.println("==============Liikkeet testi==========");
+        System.out.println("==============Liikkeet testi==========");
 
-            for (int i = 0; i < liikkeet.getlkm(); i++) {
-                Liike liike = liikkeet.anna(i);
-                System.out.println("liikkeen nro: " + i);
-                liike.tulosta(System.out);
-            }
-        } catch (SailoException ex) {
-            System.err.println(ex.getMessage());
+        for (int i = 0; i < liikkeet.getlkm(); i++) {
+            Liike liike = liikkeet.anna(i);
+            System.out.println("liikkeen nro: " + i);
+            liike.tulosta(System.out);
         }
+    }
+
+
+    private int taulukonKoko() {
+        return alkiot.length;
     }
 
 
@@ -59,13 +63,23 @@ public class Liikkeet {
      * testit ks luento 13
      * lisaa uuden liikkeen taulukkoon
      * @param liike lisattava liike
-     * @throws SailoException poikkeus kun taulukosta loppuu tila
      */
-    public void lisaa(Liike liike) throws SailoException {
-        if (lkm >= alkiot.length)
-            throw new SailoException("liikaa alkioita");
+    public void lisaa(Liike liike) {
+        if (lkm >= alkiot.length)kasvataTaulukkoa(); 
         alkiot[lkm] = liike;
         lkm++;
+    }
+
+    
+    /**
+     * kun taulukosta alkaa tila loppua
+     */
+    private void kasvataTaulukkoa() {
+        Liike[] liikkeet = new Liike[alkiot.length + 5];
+        for (int i = 0; i < lkm; i++) {
+            liikkeet[i] = alkiot[i];
+        }
+        alkiot = liikkeet;
     }
 
 
@@ -74,7 +88,7 @@ public class Liikkeet {
      * @return haettava liike
      * @throws IndexOutOfBoundsException ei ole tata alkiota
      */
-    public Liike anna(int i) throws IndexOutOfBoundsException  {
+    public Liike anna(int i) throws IndexOutOfBoundsException {
         if (i < 0 || lkm <= i)
             throw new IndexOutOfBoundsException("Laiton indeksi: " + i);
         return alkiot[i];
@@ -86,6 +100,19 @@ public class Liikkeet {
      */
     public int getlkm() {
         return lkm;
+    }
+
+
+    /**
+     * etsitaan liike jolla on haluttu liike id
+     * @param liike_id .
+     * @return haluttu liike tai null jos ei loydy
+     */
+    public Liike annaLiike(int liike_id) {
+        for (int i = 0; i < lkm; i++)
+            if (alkiot[i].getLiike_id() == liike_id)
+                return alkiot[i];
+        return null;
     }
 
 }

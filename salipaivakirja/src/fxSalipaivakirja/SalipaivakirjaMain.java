@@ -14,17 +14,17 @@ import javafx.scene.layout.Pane;
  *
  */
 public class SalipaivakirjaMain extends Application {
-	@Override
+	@Override 
 	public void start(Stage primaryStage) {
 	    try {
-	        FXMLLoader ldr = new FXMLLoader(getClass().getResource("SalipaivakirjaGUIView.fxml")); // korjaa tiedostonimi
+	        FXMLLoader ldr = new FXMLLoader(getClass().getResource("SalipaivakirjaGUIView.fxml"));
 	        final Pane root = (Pane)ldr.load();
-	        final SalipaivakirjaGUIController salipaivakirjaCtrl = (SalipaivakirjaGUIController)ldr.getController(); // korjaa nimet
+	        final SalipaivakirjaGUIController salipaivakirjaCtrl = (SalipaivakirjaGUIController)ldr.getController();
 	        
 	        final Scene scene = new Scene(root);
-	        scene.getStylesheets().add(getClass().getResource("salipaivakirja.css").toExternalForm()); // korjaa tiedostonimi
+	        scene.getStylesheets().add(getClass().getResource("salipaivakirja.css").toExternalForm());
 	        primaryStage.setScene(scene);
-	        primaryStage.setTitle("Salipaivakirja"); // korjaa title
+	        primaryStage.setTitle("Salipaivakirja");
 	        
 	        // Platform.setImplicitExit(false); // jos tämän laittaa, pitää itse sulkea
 	        
@@ -33,7 +33,7 @@ public class SalipaivakirjaMain extends Application {
 	        
 	        primaryStage.setOnCloseRequest((event) -> {
 	            // Kutsutaan voikoSulkea-metodia
-	            if ( !salipaivakirjaCtrl.voikoSulkea() ) event.consume(); // korjaa nimi
+	            if ( !salipaivakirjaCtrl.voikoSulkea() ) event.consume();
 	        });
 	        
 	        primaryStage.show();

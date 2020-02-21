@@ -15,7 +15,7 @@ public class Liike {
 
     private int liike_id;
     private String liikkeenNimi = "";
-    
+
     private static int seuraavaNumero = 1;
 
     /**
@@ -24,7 +24,8 @@ public class Liike {
     public void tulosta(PrintStream out) {
         out.println(liikkeenNimi + " | " + liike_id);
     }
-    
+
+
     /**
      * liikkeen muodostaja + rekisterointi
      * @param s liikkeen nimi
@@ -32,9 +33,11 @@ public class Liike {
      */
     public Liike(String s, boolean b) {
         this.liikkeenNimi = s;
-        if(b)this.rekisteroi();
+        if (b)
+            this.rekisteroi();
     }
-    
+
+
     /**
      * parametriton muodostaja
      */
@@ -61,7 +64,8 @@ public class Liike {
         seuraavaNumero++;
         return liike_id;
     }
-    
+
+
     /**
      * arvotaan luku halutulata valilta
      * @param ala alaraja
@@ -69,7 +73,7 @@ public class Liike {
      * @return satunnainen luku
      */
     public static int rand(int ala, int yla) {
-        double n = (yla-ala)*Math.random()+ala;
+        double n = (yla - ala) * Math.random() + ala;
         return (int) Math.round(n);
     }
 
@@ -78,9 +82,9 @@ public class Liike {
      * rakennusteline
      */
     public void taytaLiikeTiedoilla() {
-        liikkeenNimi = "leuanveto"+rand(100,999);
+        liikkeenNimi = "leuanveto" + rand(100, 999);
     }
-    
+
 
     /**
      * @param args ei kaytossa
@@ -88,9 +92,9 @@ public class Liike {
     public static void main(String[] args) {
         Liike liike = new Liike();
         Liike liike2 = new Liike();
-        
+
         liike.tulosta(System.out);
-        liike.rekisteroi();  
+        liike.rekisteroi();
         liike.taytaLiikeTiedoilla();
         liike.tulosta(System.out);
 
@@ -100,12 +104,14 @@ public class Liike {
         liike2.tulosta(System.out);
     }
 
+
     /**
      * @return liike_id
      */
     public int getLiike_id() {
         return liike_id;
     }
+
 
     /**
      * @return liikkeen nimi

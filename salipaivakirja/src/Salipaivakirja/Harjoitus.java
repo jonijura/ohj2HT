@@ -13,31 +13,46 @@ import java.io.PrintStream;
  */
 public class Harjoitus {
 
-    
     private String pvm = "";
     private int harj_id = 0;
-    private static int seuraavaNumero = 1;
-    
-    
+    private static int seuraavaNumero = 0;
+
     /**
      * @param args ei kaytossa
      */
     public static void main(String[] args) {
-        Harjoitus harj = new Harjoitus("2.3.2020",true);
-        Harjoitus harj2 = new Harjoitus("5.1.2020",true);
-        Harjoitus harj3 = new Harjoitus("12.1.2020",true);
+        Harjoitus harj = new Harjoitus();
+        Harjoitus harj2 = new Harjoitus();
+        Harjoitus harj3 = new Harjoitus();
         harj.tulosta(System.out);
         harj2.tulosta(System.out);
         harj3.tulosta(System.out);
     }
-    
+
+
+    /**
+     * parametriton muodostaja, joka arpoo sisalloksi jotain jarkevaa
+     */
+    public Harjoitus() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Liike.rand(1, 28));
+        sb.append('.');
+        sb.append(Liike.rand(1, 12));
+        sb.append('.');
+        sb.append(Liike.rand(2000, 2020));
+        this.pvm = sb.toString();
+        this.rekisteroi();
+    }
+
+
     /**
      * @return harj_id
      */
     public int getharj_id() {
         return harj_id;
     }
-    
+
+
     /**
      * liikkeen muodostaja + rekisterointi
      * @param s liikkeen nimi
@@ -45,9 +60,11 @@ public class Harjoitus {
      */
     public Harjoitus(String s, boolean b) {
         this.pvm = s;
-        if(b)this.rekisteroi();
+        if (b)
+            this.rekisteroi();
     }
-    
+
+
     /**
      * rekisteroidaan uusi liike
      * @return liike_id
@@ -57,7 +74,8 @@ public class Harjoitus {
         seuraavaNumero++;
         return harj_id;
     }
-    
+
+
     /**
      * tarvitaan tulevaisuudessa tekstilaatikkoon tulostamiseen
      * @param os outputstream tulostus
@@ -66,6 +84,7 @@ public class Harjoitus {
         tulosta(new PrintStream(os));
     }
 
+
     /**
      * @param out minne tulostetaan
      */
@@ -73,12 +92,12 @@ public class Harjoitus {
         out.println(pvm + " | " + harj_id);
     }
 
+
     /**
      * @return pvm
      */
     public String getpvm() {
         return pvm;
     }
-    
 
 }

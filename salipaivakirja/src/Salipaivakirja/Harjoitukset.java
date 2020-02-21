@@ -14,6 +14,7 @@ import java.util.List;
 public class Harjoitukset {
     
     private List<Harjoitus> harjoitukset = new ArrayList<>();
+    @SuppressWarnings("unused")
     private int lkm = 0;
 
     /**
@@ -49,7 +50,7 @@ public class Harjoitukset {
      * @return harjoitusten lkm
      */
     public int getlkm() {
-        return lkm;
+        return harjoitukset.size();
     }
 
     /**

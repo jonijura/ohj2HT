@@ -10,7 +10,9 @@ import javafx.scene.control.ChoiceBox;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import Salipaivakirja.HarjoituksenSisalto;
 import Salipaivakirja.Harjoitus;
+import Salipaivakirja.Liike;
 import Salipaivakirja.Spvk;
 import fi.jyu.mit.fxgui.*;
 
@@ -23,8 +25,10 @@ import fi.jyu.mit.fxgui.*;
  */
 public class SalipaivakirjaGUIController implements Initializable {
 
-    ObservableList<String> list = FXCollections.observableArrayList("Kyykky",
-            "Penkki");
+    private static int MONESKOHARJOITUS = 0; // esimerkkiharjoitusten
+                                             // harjoitusid rakennusteline
+
+    ObservableList<String> list = FXCollections.observableArrayList();
 
     @FXML
     private ListChooser<Harjoitus> treeniValikko;
@@ -33,7 +37,9 @@ public class SalipaivakirjaGUIController implements Initializable {
     @FXML
     private ChoiceBox<String> kuvaaja2Valikko;
     @FXML
-    private StringGrid<String> stringGridTreeni;
+    private StringGrid<HarjoituksenSisalto> stringGridTreeni;
+    @FXML
+    private StringGrid<HarjoituksenSisalto> stringGridLiike;
 
     /**
      * Käsitellään uuden merkinn�n lisääminen
@@ -41,8 +47,6 @@ public class SalipaivakirjaGUIController implements Initializable {
     @FXML
     private void handleUusiMerkinta() {
         uusiMerkinta();
-        // ModalController.showModal(SalipaivakirjaGUIController.class.getResource(
-        // "HarjoituksenLisaysView.fxml"), "Harjoitus", null, "");
     }
 
 
@@ -52,6 +56,15 @@ public class SalipaivakirjaGUIController implements Initializable {
     @FXML
     private void handleVertaa() {
         Dialogs.showMessageDialog("Ei osata");
+    }
+    
+    
+    /**
+     * Käsitellään vertaa
+     */
+    @FXML
+    private void handleLiikkeenTiedot() {
+        naytaLiike();
     }
 
 
@@ -91,6 +104,12 @@ public class SalipaivakirjaGUIController implements Initializable {
         tallenna();
         Platform.exit();
     }
+ 
+    
+    @Override
+    public void initialize(URL arg0, ResourceBundle arg1) {
+        alusta();
+    }    
 
     // ======================================================================
     // ======================================================================
@@ -106,44 +125,28 @@ public class SalipaivakirjaGUIController implements Initializable {
 
     /**
      * Tarkistetaan onko tallennus tehty
-     * 
      * @return true jos saa sulkaa sovelluksen, false jos ei
      */
     public boolean voikoSulkea() {
-        tallenna();
+        //tallenna(); rasittava dialogi pomppii nenälle
         return true;
     }
 
-
-    @Override
-    public void initialize(URL arg0, ResourceBundle arg1) {
-        alusta();
-    }
-
-
+    
     /**
      * alutetaan aloitusikkuna
      */
     private void alusta() {
         treeniValikko.clear();
+        stringGridTreeni.clear();
+        stringGridLiike.clear();
+        
         treeniValikko.addSelectionListener(e -> naytaTreeni());
+        
         kuvaaja1Valikko.setItems(list);
         kuvaaja2Valikko.setItems(list);
-
     }
-
-
-    /**
-     * nayttaa treenin tiedot naytolla
-     */
-    private void naytaTreeni() {
-        Harjoitus harj = treeniValikko.getSelectedObject();
-
-        if (harj == null) return;
-        
-        stringGridTreeni.set("ok", 1, 1);
-    }
-
+    
 
     /**
      * asetetaan kontrolleri salipaivakirjalle
@@ -152,31 +155,95 @@ public class SalipaivakirjaGUIController implements Initializable {
     public void setSpvk(Spvk spvk) {
         this.spvk = spvk;
     }
-
-
+    
+    
     /**
-     * TODO vaikka mita
+     * nayttaa treenin tiedot naytolla
      */
-    private void uusiMerkinta() {
-        Harjoitus harj = new Harjoitus("2.3.2020", true);
-
-        spvk.lisaa(harj);
-
-        hae(harj.getharj_id());
+    private void naytaTreeni() {
+        stringGridTreeni.clear();
+        Harjoitus harj = treeniValikko.getSelectedObject();
+        if (harj == null) {
+            stringGridTreeni.setRivit("null");
+            return;
+        }
+        int harj_id = harj.getharj_id();
+        stringGridTreeni.setRivit(harj.getpvm() + "|sarjoja|toistoja|paino"
+                + spvk.harjsisTiedostona(harj_id));
     }
 
 
     /**
-     * Hakee jäsenten tiedot listaan
-     * @param jnro jäsenen numero, joka aktivoidaan haun jälkeen
+     * nayttaa liikkeen tiedot naytolla
      */
-    private void hae(int jnro) {
+    private void naytaLiike() {
+        stringGridLiike.clear();
+        int liike_id = Liike.rand(1, 5); //TODO kuinka saan valitun liikkeen liike_id:n???
+        stringGridLiike.setRivit(spvk.annaLiikkeenNimi(liike_id) + "|sarjoja|toistoja|paino"
+                +spvk.liikeHistoriaTiedostona(liike_id));
+    }
+
+
+    /**
+     * generoidaan uusi merkinta ja lisataan se listalle
+     */
+    private void uusiMerkinta() {
+        if(MONESKOHARJOITUS==0)luoEsimerkkiLiikkeita();
+        Harjoitus harj = new Harjoitus();
+        HarjoituksenSisalto harjsis = new HarjoituksenSisalto(MONESKOHARJOITUS);
+        HarjoituksenSisalto harjsis2 = new HarjoituksenSisalto(
+                MONESKOHARJOITUS);
+        HarjoituksenSisalto harjsis3 = new HarjoituksenSisalto(
+                MONESKOHARJOITUS);
+        MONESKOHARJOITUS++;
+
+        spvk.lisaa(harj);
+        spvk.lisaa(harjsis);
+        spvk.lisaa(harjsis2);
+        spvk.lisaa(harjsis3);
+
+        hae(harj.getharj_id());
+    }
+
+    
+    /**
+     * luodaan pari esimerkkiliiketta uusia merkintoja varten
+     */
+    private void luoEsimerkkiLiikkeita() {
+        lisaaLiike("Kyykky");
+        lisaaLiike("Penkkipunnerrus");
+        lisaaLiike("Leuanveto");
+        lisaaLiike("Pystypunnerrus");
+        lisaaLiike("Hauiskääntö");
+    }
+    
+    
+    /**
+     * lisätään liikkeitä tiedostoon
+     * @param s liikkeen nimi
+     */
+    private void lisaaLiike(String s) {
+        if (spvk.onkoUusiLiike(s)) {
+            Liike liike = new Liike(s, true);
+            spvk.lisaa(liike);
+            list.add(s);
+            kuvaaja1Valikko.setItems(list);
+            kuvaaja2Valikko.setItems(list);
+        }
+    }
+
+
+    /**
+     * Hakee harjoituksen tiedot listaan
+     * @param harj_id harjoitus id joka aktivoidaan haun jälkeen
+     */
+    private void hae(int harj_id) {
         treeniValikko.clear();
 
         int index = 0;
         for (int i = 0; i < spvk.getHarjoitustenlkm(); i++) {
             Harjoitus harjoitus = spvk.annaHarjoitus(i);
-            if (harjoitus.getharj_id() == jnro)
+            if (harjoitus.getharj_id() == harj_id)
                 index = i;
             treeniValikko.add(harjoitus.getpvm(), harjoitus);
         }
