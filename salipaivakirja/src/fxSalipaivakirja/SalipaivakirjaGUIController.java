@@ -6,14 +6,15 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
+import kanta.*;
+import salipaivakirja.HarjoituksenSisalto;
+import salipaivakirja.Harjoitus;
+import salipaivakirja.Liike;
+import salipaivakirja.Spvk;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import Salipaivakirja.HarjoituksenSisalto;
-import Salipaivakirja.Harjoitus;
-import Salipaivakirja.Liike;
-import Salipaivakirja.Spvk;
 import fi.jyu.mit.fxgui.*;
 
 /**
@@ -178,7 +179,7 @@ public class SalipaivakirjaGUIController implements Initializable {
      */
     private void naytaLiike() {
         stringGridLiike.clear();
-        int liike_id = Liike.rand(1, 5); //TODO kuinka saan valitun liikkeen liike_id:n???
+        int liike_id = Rng.rand(1, 5); //TODO kuinka saan valitun liikkeen liike_id:n???
         stringGridLiike.setRivit(spvk.annaLiikkeenNimi(liike_id) + "|sarjoja|toistoja|paino"
                 +spvk.liikeHistoriaTiedostona(liike_id));
     }
@@ -190,18 +191,14 @@ public class SalipaivakirjaGUIController implements Initializable {
     private void uusiMerkinta() {
         if(MONESKOHARJOITUS==0)luoEsimerkkiLiikkeita();
         Harjoitus harj = new Harjoitus();
-        HarjoituksenSisalto harjsis = new HarjoituksenSisalto(MONESKOHARJOITUS);
-        HarjoituksenSisalto harjsis2 = new HarjoituksenSisalto(
-                MONESKOHARJOITUS);
-        HarjoituksenSisalto harjsis3 = new HarjoituksenSisalto(
-                MONESKOHARJOITUS);
-        MONESKOHARJOITUS++;
-
         spvk.lisaa(harj);
-        spvk.lisaa(harjsis);
-        spvk.lisaa(harjsis2);
-        spvk.lisaa(harjsis3);
-
+        int r = Rng.rand(2,5);
+        for(int i=0;i<r;i++) {
+            HarjoituksenSisalto harjsis = new HarjoituksenSisalto(MONESKOHARJOITUS);
+            spvk.lisaa(harjsis);
+        }
+        
+        MONESKOHARJOITUS++;
         hae(harj.getharj_id());
     }
 
@@ -215,6 +212,8 @@ public class SalipaivakirjaGUIController implements Initializable {
         lisaaLiike("Leuanveto");
         lisaaLiike("Pystypunnerrus");
         lisaaLiike("Hauiskääntö");
+        lisaaLiike("Alatalja");
+        lisaaLiike("Maastaveto");
     }
     
     

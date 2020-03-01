@@ -1,9 +1,11 @@
 /**
  * 
  */
-package Salipaivakirja;
+package salipaivakirja;
 
 import java.io.PrintStream;
+
+import kanta.Rng;
 
 /**
  * @author Joona1
@@ -51,10 +53,10 @@ public class HarjoituksenSisalto {
         this.sisalto[0] = harj_id;
         this.sisalto[1] = seuraavaNumero;
         seuraavaNumero++;
-        this.sisalto[2] = Liike.rand(1, 5); //ei saa olla suurempi kuin liikkeiden maara!
-        this.sisalto[3] = Liike.rand(2, 5);
-        this.sisalto[4] = Liike.rand(4, 12);
-        this.sisalto[5] = 5 * Liike.rand(4, 24);
+        this.sisalto[2] = Rng.rand(1, 7); //ei saa olla suurempi kuin liikkeiden maara!
+        this.sisalto[3] = Rng.rand(2, 5);
+        this.sisalto[4] = Rng.rand(4, 12);
+        this.sisalto[5] = 5 * Rng.rand(4, 24);
     }
 
 
@@ -66,10 +68,10 @@ public class HarjoituksenSisalto {
         this.sisalto[0] = 0;
         this.sisalto[1] = seuraavaNumero;
         seuraavaNumero++;
-        this.sisalto[2] = Liike.rand(1, 5); //ei saa olla suurempi kuin liikkeiden maara!
-        this.sisalto[3] = Liike.rand(2, 5);
-        this.sisalto[4] = Liike.rand(4, 12);
-        this.sisalto[5] = 5 * Liike.rand(4, 24);
+        this.sisalto[2] = Rng.rand(1, 5); //ei saa olla suurempi kuin liikkeiden maara!
+        this.sisalto[3] = Rng.rand(2, 5);
+        this.sisalto[4] = Rng.rand(4, 12);
+        this.sisalto[5] = 5 * Rng.rand(4, 24);
     }
 
 

@@ -1,8 +1,8 @@
 package fxSalipaivakirja;
 	
-import Salipaivakirja.Spvk;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import salipaivakirja.Spvk;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;

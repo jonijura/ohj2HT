@@ -1,7 +1,7 @@
 /**
  * 
  */
-package Salipaivakirja;
+package salipaivakirja;
 
 /**
  * @author Joona1

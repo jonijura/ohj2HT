@@ -1,10 +1,12 @@
 /**
  * 
  */
-package Salipaivakirja;
+package salipaivakirja;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+
+import kanta.Rng;
 
 /**
  * @author Joona1
@@ -18,45 +20,24 @@ public class Harjoitus {
     private static int seuraavaNumero = 0;
 
     /**
-     * @param args ei kaytossa
-     */
-    public static void main(String[] args) {
-        Harjoitus harj = new Harjoitus();
-        Harjoitus harj2 = new Harjoitus();
-        Harjoitus harj3 = new Harjoitus();
-        harj.tulosta(System.out);
-        harj2.tulosta(System.out);
-        harj3.tulosta(System.out);
-    }
-
-
-    /**
      * parametriton muodostaja, joka arpoo sisalloksi jotain jarkevaa
      */
     public Harjoitus() {
         StringBuilder sb = new StringBuilder();
-        sb.append(Liike.rand(1, 28));
+        sb.append(Rng.rand(1, 28));
         sb.append('.');
-        sb.append(Liike.rand(1, 12));
+        sb.append(Rng.rand(1, 12));
         sb.append('.');
-        sb.append(Liike.rand(2000, 2020));
+        sb.append(Rng.rand(2000, 2020));
         this.pvm = sb.toString();
         this.rekisteroi();
     }
 
 
     /**
-     * @return harj_id
-     */
-    public int getharj_id() {
-        return harj_id;
-    }
-
-
-    /**
-     * liikkeen muodostaja + rekisterointi
-     * @param s liikkeen nimi
-     * @param b rekisteroidaanko liike
+     * harjoituksen muodostaja + rekisterointi
+     * @param s harjoituksen tiedot merkkijonona
+     * @param b rekisteroidaanko Harjoitus
      */
     public Harjoitus(String s, boolean b) {
         this.pvm = s;
@@ -66,12 +47,29 @@ public class Harjoitus {
 
 
     /**
-     * rekisteroidaan uusi liike
-     * @return liike_id
+     * rekisteroidaan uusi harjoitus
+     * @return harj_id
+     * @example
+     * <pre name="test">
+     *   Harjoitus l1 = new Harjoitus();
+     *   l1.getharj_id() === 0;
+     *   Harjoitus l2 = new Harjoitus();
+     *   int n1 = l1.getharj_id();
+     *   int n2 = l2.getharj_id();
+     *   n1 === n2-1;
+     * </pre>
      */
     public int rekisteroi() {
         harj_id = seuraavaNumero;
         seuraavaNumero++;
+        return harj_id;
+    }
+
+
+    /**
+     * @return harj_id
+     */
+    public int getharj_id() {
         return harj_id;
     }
 
@@ -98,6 +96,19 @@ public class Harjoitus {
      */
     public String getpvm() {
         return pvm;
+    }
+
+
+    /**
+     * @param args ei kaytossa
+     */
+    public static void main(String[] args) {
+        Harjoitus harj = new Harjoitus();
+        Harjoitus harj2 = new Harjoitus();
+        Harjoitus harj3 = new Harjoitus();
+        harj.tulosta(System.out);
+        harj2.tulosta(System.out);
+        harj3.tulosta(System.out);
     }
 
 }

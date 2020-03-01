@@ -1,8 +1,10 @@
 package fxSalipaivakirja;
 
 import fi.jyu.mit.fxgui.Dialogs;
+import fi.jyu.mit.fxgui.ModalController;
 import fi.jyu.mit.fxgui.ModalControllerInterface;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 
 /**
  * Kontrolleri harjoituksen lisaamiselle (/muokkaukselle)
@@ -11,6 +13,11 @@ import javafx.fxml.FXML;
  *
  */
 public class SpvkHarjoitusController implements ModalControllerInterface<String> {
+    
+    @FXML
+    private TextField liike1t;
+    @FXML
+    private TextField liike1n;
     
     @FXML
     private void handleOK() {
@@ -28,7 +35,7 @@ public class SpvkHarjoitusController implements ModalControllerInterface<String>
 
     @FXML
     private void handleCancel() {
-        Dialogs.showMessageDialog("En osannut");
+        ModalController.closeStage(liike1t);
     }
 
     @Override

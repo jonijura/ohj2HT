@@ -1,7 +1,7 @@
 /**
  * 
  */
-package Salipaivakirja;
+package salipaivakirja;
 
 import java.util.ArrayList;
 import java.util.List;
