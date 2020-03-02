@@ -85,7 +85,7 @@ public class Liikkeet {
      * Liikkeet l = new Liikkeet();
      * l.lisaa(new Liike("kuperkeikka",true));
      * l.annaLiike(1).getLiikkeenNimi()==="kuperkeikka";
-     * l.annaLiike(2)===null;
+     * l.annaLiike(2); #THROWS IndexOutOfBoundsException
      * l.lisaa(new Liike("karrynpyora", true));
      * l.annaLiike(2).getLiikkeenNimi()==="karrynpyora";
      * </pre>
@@ -94,7 +94,7 @@ public class Liikkeet {
         for (int i = 0; i < lkm; i++)
             if (alkiot[i].getLiike_id() == liike_id)
                 return alkiot[i];
-        return null;
+        throw new IndexOutOfBoundsException("Liikettä, jolla on hakemasi id ei ole olemassa!");
     }
 
 
@@ -126,6 +126,27 @@ public class Liikkeet {
             liike.tulosta(System.out);
         }
         liikkeet.annaLiike(3).tulosta(System.out);
+    }
+
+
+    /**
+     * @param s liikkeen nimi
+     * @return onko liiketta viela olemassa
+     * @example
+     * <pre name="test">
+     * Liikkeet l = new Liikkeet();
+     * l.lisaa(new Liike("kuperkeikka",true));
+     * l.onkoUusi("kuperkeikka")===false;
+     * l.onkoUusi(" Kuperkeikka  ")===false;
+     * l.onkoUusi("kuperke ikka")===true;
+     * </pre>
+     */
+    public boolean onkoUusi(String s) {
+        String st = s.trim();
+        for(int i=0;i<lkm;i++) {
+            if(anna(i).getLiikkeenNimi().equalsIgnoreCase(st))return false;
+        }
+        return true;
     }
 
 }

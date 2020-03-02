@@ -12,6 +12,10 @@ import salipaivakirja.Harjoitus;
 import salipaivakirja.Liike;
 import salipaivakirja.Spvk;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -26,7 +30,7 @@ import fi.jyu.mit.fxgui.*;
  */
 public class SalipaivakirjaGUIController implements Initializable {
 
-    private static int MONESKOHARJOITUS = 0; // esimerkkiharjoitusten
+    private static int MONESKOHARJOITUS = 1; // esimerkkiharjoitusten
                                              // harjoitusid rakennusteline
 
     ObservableList<String> list = FXCollections.observableArrayList();
@@ -74,8 +78,9 @@ public class SalipaivakirjaGUIController implements Initializable {
      */
     @FXML
     private void handleApua() {
-        Dialogs.showMessageDialog("En auta");
+        avustus();
     }
+
 
 
     /**
@@ -129,8 +134,31 @@ public class SalipaivakirjaGUIController implements Initializable {
      * @return true jos saa sulkaa sovelluksen, false jos ei
      */
     public boolean voikoSulkea() {
-        //tallenna(); rasittava dialogi pomppii nenälle
+        //tallenna(); rasittava dialogi, jota ei aina jaksa sulkea TODO: poista kommentti
         return true;
+    }
+
+
+    /**
+     * naytetaan ohjelman suunnitelma selaimessa
+     */
+    public void avustus() {
+        boolean b = Dialogs.showQuestionDialog("Apua",
+                "Haluatko avata ohjelman" + " suunnitelman selaimella?",
+                "kyllä", "Ei");
+
+        if (b) {
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                URI uri = new URI(
+                        "https://tim.jyu.fi/view/kurssit/tie/ohj2/2020k/ht/jonijura");
+                desktop.browse(uri);
+            } catch (URISyntaxException e) {
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
     }
 
     
@@ -189,7 +217,7 @@ public class SalipaivakirjaGUIController implements Initializable {
      * generoidaan uusi merkinta ja lisataan se listalle
      */
     private void uusiMerkinta() {
-        if(MONESKOHARJOITUS==0)luoEsimerkkiLiikkeita();
+        if(MONESKOHARJOITUS==1)luoEsimerkkiLiikkeita();
         Harjoitus harj = new Harjoitus();
         spvk.lisaa(harj);
         int r = Rng.rand(2,5);

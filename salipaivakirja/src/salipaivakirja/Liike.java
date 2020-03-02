@@ -68,7 +68,8 @@ public class Liike {
      * parametriton muodostaja
      */
     public Liike() {
-        //
+        this.liikkeenNimi="kuperkeikka"+Rng.rand(1,1000);
+        rekisteroi();
     }
 
 
@@ -95,10 +96,7 @@ public class Liike {
      * @example
      * <pre name="test">
      *   Liike l1 = new Liike();
-     *   l1.getLiike_id() === 0;
-     *   l1.rekisteroi();
      *   Liike l2 = new Liike();
-     *   l2.rekisteroi();
      *   int n1 = l1.getLiike_id();
      *   int n2 = l2.getLiike_id();
      *   n1 === n2-1;

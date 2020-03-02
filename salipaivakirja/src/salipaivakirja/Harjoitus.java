@@ -16,8 +16,8 @@ import kanta.Rng;
 public class Harjoitus {
 
     private String pvm = "";
-    private int harj_id = 0;
-    private static int seuraavaNumero = 0;
+    private int harj_id = 1;
+    private static int seuraavaNumero = 1;
 
     /**
      * parametriton muodostaja, joka arpoo sisalloksi jotain jarkevaa
@@ -52,7 +52,6 @@ public class Harjoitus {
      * @example
      * <pre name="test">
      *   Harjoitus l1 = new Harjoitus();
-     *   l1.getharj_id() === 0;
      *   Harjoitus l2 = new Harjoitus();
      *   int n1 = l1.getharj_id();
      *   int n2 = l2.getharj_id();
