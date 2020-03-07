@@ -3,6 +3,8 @@
  */
 package salipaivakirja;
 
+import javafx.collections.ObservableList;
+
 /**
  * @author Joona1
  * @version 17.2.2020
@@ -41,8 +43,9 @@ public class Spvk {
     /**
      * @param i paikka josta liiketta haetaan
      * @return liike
+     * @throws SailoException jos ei loydy
      */
-    public Liike annaLiike(int i) {
+    public Liike annaLiike(int i) throws SailoException {
         return liikkeet.anna(i);
     }
 
@@ -50,8 +53,9 @@ public class Spvk {
     /**
      * @param i paikka, josta harjoitusta haetaan
      * @return harjoitus
+     * @throws SailoException jos ei loydy
      */
-    public Harjoitus annaHarjoitus(int i) {
+    public Harjoitus annaHarjoitus(int i) throws SailoException{
         return harjoitukset.anna(i);
     }
 
@@ -59,8 +63,9 @@ public class Spvk {
     /**
      * @param i paikka, josta harjsis haetaan
      * @return harjsis
-     */
-    public HarjoituksenSisalto annaHarjoituksenSisalto(int i) {
+     * @throws SailoException jos ei loydy
+     */ 
+    public HarjoituksenSisalto annaHarjoituksenSisalto(int i) throws SailoException {
         return harjsis.anna(i);
     }
 
@@ -92,8 +97,9 @@ public class Spvk {
     /**
      * @param liike_id . 
      * @return liikkeen nimi
+     * @throws SailoException jos ei loydy
      */
-    public String annaLiikkeenNimi(int liike_id) {
+    public String annaLiikkeenNimi(int liike_id) throws SailoException{
         return liikkeet.annaLiike(liike_id).getLiikkeenNimi();
     }
 
@@ -101,8 +107,9 @@ public class Spvk {
     /**
      * @param harj_id harjoituksen id
      * @return harjoituksen sisalto taulukkoon sopivana tiedostona
+     * @throws SailoException jos ongelmia
      */
-    public String harjsisTiedostona(int harj_id) {
+    public String harjsisTiedostona(int harj_id) throws SailoException {
         StringBuilder sb = new StringBuilder("\n");
         for (int i = 0; i < harjsis.getlkm(); i++) {
             if (harjsis.anna(i).getHarj_id() == harj_id) {
@@ -121,8 +128,10 @@ public class Spvk {
     /**
      * @param liike_id haettava liike
      * @return liikkeen historia tiedostona
+     * @throws SailoException jos ongelmia
      * @example
      * <pre name="test">
+     *  #THROWS SailoException
      * Spvk spvk = new Spvk();
      * spvk.lisaa(new Liike("kuperkeikka",true));
      * spvk.lisaa(new Liike("karrynpyora",true));
@@ -141,12 +150,12 @@ public class Spvk {
      * spvk.harjsisTiedostona(1).length()===40;
      * </pre>
      */
-    public String liikeHistoriaTiedostona(int liike_id) {
+    public String liikeHistoriaTiedostona(int liike_id) throws SailoException {
         StringBuilder sb = new StringBuilder("\n");
         for (int i = 0; i < harjsis.getlkm(); i++) {
             if (harjsis.anna(i).getLiike_id() == liike_id) {
 
-                String pvm = harjoitukset.annaID(harjsis.anna(i).getHarj_id())
+                String pvm = harjoitukset.annaHarjoitus(harjsis.anna(i).getHarj_id())
                         .getpvm();
                 sb.append(pvm);
                 sb.append(harjsis.anna(i).tiedostona());
@@ -161,8 +170,9 @@ public class Spvk {
      * katsotaan onko liike uusi vai onko se jokin edellisista
      * @param s liikkeen nimi
      * @return onko liike uusi
+     * @throws SailoException jos ongelmia
      */
-    public boolean onkoUusiLiike(String s) {
+    public boolean onkoUusiLiike(String s) throws SailoException {
         return liikkeet.onkoUusi(s);
     }
 
@@ -183,6 +193,7 @@ public class Spvk {
             spvk.lisaa(new HarjoituksenSisalto());
             spvk.lisaa(new Harjoitus());
         }
+        try {
 
         for (int i = 0; i < koko; i++) {
             spvk.annaHarjoitus(i).tulosta(System.out);
@@ -199,6 +210,41 @@ public class Spvk {
         for (int i = 0; i < koko; i++)
             spvk.annaHarjoituksenSisalto(i).MuutaLiike_id(1);
         System.out.println(spvk.liikeHistoriaTiedostona(1));
+        } catch(SailoException e) {
+            e.getMessage();
+        }
+    }
+
+
+    /**
+     * tallennetaan
+     * @throws SailoException jos ei tallennu
+     */
+    public void tallenna() throws SailoException {
+        liikkeet.tallenna();
+        harjoitukset.tallenna();
+        harjsis.tallenna();
+        
+    }
+
+
+    /**
+     * luetaan tiedostot
+     * @throws SailoException jos ei loydy
+     */
+    public void lueTiedosto() throws SailoException {
+        liikkeet.lueTiedosto();
+        harjoitukset.lueTiedosto();
+        harjsis.lueTiedosto();
+    }
+
+
+    /**
+     * @param list lista johon liikkeiden nimet kerataan
+     * @throws SailoException jos ongelmia
+     */
+    public void lisaaLiikkeet(ObservableList<String> list) throws SailoException {
+        for(int i=0;i<liikkeet.getlkm();i++)list.add(liikkeet.anna(i).getLiikkeenNimi());
     }
 
 }

@@ -61,7 +61,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <TextField promptText="etsi" />
+            <TextField fx:id="hakuKentta" onKeyTyped="#etsi" promptText="etsi" />
             <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="129.0" text="Salitreenit" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS" />
             <ListChooser fx:id="treeniValikko" rivit="ke 15.1&#10;pe 17.1&#10;su19.1" VBox.vgrow="ALWAYS">
                <padding>

@@ -6,6 +6,8 @@ package salipaivakirja;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import fi.jyu.mit.ohj2.Mjonot;
+import kanta.RekisteroituMerkkijono;
 import kanta.Rng;
 
 /**
@@ -13,7 +15,7 @@ import kanta.Rng;
  * @version 18.2.2020
  *
  */
-public class Harjoitus {
+public class Harjoitus implements RekisteroituMerkkijono{
 
     private String pvm = "";
     private int harj_id = 1;
@@ -23,6 +25,7 @@ public class Harjoitus {
      * parametriton muodostaja, joka arpoo sisalloksi jotain jarkevaa
      */
     public Harjoitus() {
+        
         StringBuilder sb = new StringBuilder();
         sb.append(Rng.rand(1, 28));
         sb.append('.');
@@ -58,11 +61,13 @@ public class Harjoitus {
      *   n1 === n2-1;
      * </pre>
      */
+    @Override
     public int rekisteroi() {
         harj_id = seuraavaNumero;
         seuraavaNumero++;
         return harj_id;
     }
+    
 
 
     /**
@@ -96,6 +101,23 @@ public class Harjoitus {
     public String getpvm() {
         return pvm;
     }
+    
+    
+    @Override
+    public String toString() {
+        return harj_id+"|"+pvm;
+    }
+
+    
+    /**
+     * @param s tiedoston merkkijono
+     */
+    @Override
+    public void parse(String s) {
+        var sb = new StringBuilder(s);
+        harj_id=Mjonot.erota(sb, '|', 0);
+        pvm = Mjonot.erota(sb,'|',"0.0.0000");
+    }
 
 
     /**
@@ -108,6 +130,18 @@ public class Harjoitus {
         harj.tulosta(System.out);
         harj2.tulosta(System.out);
         harj3.tulosta(System.out);
+    }
+
+
+    @Override
+    public String getString() {
+        return getpvm();
+    }
+
+
+    @Override
+    public int getID() {
+        return getharj_id();
     }
 
 }

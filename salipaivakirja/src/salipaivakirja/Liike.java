@@ -14,7 +14,7 @@ import fi.jyu.mit.ohj2.Mjonot;
  * @version 17.2.2020
  *
  */
-public class Liike {
+public class Liike implements RekisteroituMerkkijono{
 
     private int liike_id;
     private String liikkeenNimi = "";
@@ -54,6 +54,7 @@ public class Liike {
      * l1.getLiike_id()===-1;
      * </pre>
      */
+    @Override
     public void parse(String s) {
         var sb = new StringBuffer(s);
         this.liike_id = Mjonot.erotaInt(sb, -1);
@@ -102,6 +103,7 @@ public class Liike {
      *   n1 === n2-1;
      * </pre>
      */
+    @Override
     public int rekisteroi() {
         liike_id = seuraavaNumero;
         seuraavaNumero++;
@@ -131,6 +133,12 @@ public class Liike {
     public String getLiikkeenNimi() {
         return liikkeenNimi;
     }
+    
+    
+    @Override
+    public String toString() {
+        return liike_id + "|" + liikkeenNimi;
+    }
 
 
     /**
@@ -149,6 +157,18 @@ public class Liike {
         liike2.rekisteroi();
         liike2.tulosta(System.out);
 
+    }
+
+
+    @Override
+    public String getString() {
+        return getLiikkeenNimi();
+    }
+
+
+    @Override
+    public int getID() {
+        return getLiike_id();
     }
 
 }

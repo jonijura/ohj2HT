@@ -61,4 +61,14 @@ public class SpvkHarjoitusController
     private void lisaaLiike() {
         // TODO Auto-generated method stub
     }
+
+
+    /**
+     * muokataan harjoitusmerkintaa
+     */
+    public static void muokkaaMerkintaa() {
+        ModalController.showModal(SalipaivakirjaGUIController.class.getResource(
+                "HarjoituksenLisaysView.fxml"), "Harjoitus", null, "");
+        
+    }
 }

@@ -60,7 +60,7 @@ public class HarjoituksenSisalto {
      * @param s merkkijono
      * @example
      * <pre name="test">
-     * var hs = new HarjoituksenSisalto("7|1|2|3|4|5|");
+     * var hs = new HarjoituksenSisalto("7|1|2|3|4|5");
      * hs.tiedostona()==="|3|4|5";
      * </pre>
      */
@@ -68,8 +68,7 @@ public class HarjoituksenSisalto {
         var sb = new StringBuilder(s);
         sb.append("z");
         for(int i=0;i<TKOKO;i++) {
-            this.sisalto[i]=Mjonot.erotaInt(sb, -1);
-            sb.deleteCharAt(0);
+            this.sisalto[i]=Mjonot.erota(sb, '|',-1);
         }
     }
 
@@ -111,11 +110,12 @@ public class HarjoituksenSisalto {
      * @param out minne tulostetaan
      */
     public void tulosta(PrintStream out) {
-        StringBuilder tulostus = new StringBuilder("harjsis: ");
+        var tulostus = new StringBuilder();
         for (int i = 0; i < 6; i++) {
             tulostus.append(sisalto[i]);
-            tulostus.append(" | ");
+            tulostus.append("|");
         }
+        tulostus.deleteCharAt(tulostus.length()-1);
         out.println(tulostus);
     }
 
@@ -166,6 +166,17 @@ public class HarjoituksenSisalto {
         }
         tiedosto.deleteCharAt(tiedosto.length() - 1);
         return tiedosto.toString();
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for(int i : sisalto) {
+            sb.append(i);
+            sb.append("|");
+        }
+        sb.deleteCharAt(sb.length()-1);
+        return sb.toString();
     }
 
 
