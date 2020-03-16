@@ -17,7 +17,7 @@ import java.util.Scanner;
  * @version 18.2.2020
  *
  */
-public class HarjoituksienSisalto {
+public class HarjoituksienSisalto{
 
     private List<HarjoituksenSisalto> harjsis = new ArrayList<>();
 
@@ -152,5 +152,7 @@ public class HarjoituksienSisalto {
             e.printStackTrace();
         }
     }
+
+
 
 }

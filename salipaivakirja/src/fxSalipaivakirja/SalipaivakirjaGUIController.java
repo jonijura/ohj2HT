@@ -72,15 +72,6 @@ public class SalipaivakirjaGUIController implements Initializable {
 
 
     /**
-     * Käsitellään vertaa
-     */
-    @FXML
-    private void handleLiikkeenTiedot() {
-        //naytaLiike();
-    }
-
-
-    /**
      * Käsitellään apua
      */
     @FXML
@@ -94,7 +85,7 @@ public class SalipaivakirjaGUIController implements Initializable {
      */
     @FXML
     private void handleMuokkaaMerkintaa() {
-        SpvkHarjoitusController.muokkaaMerkintaa();
+        SpvkHarjoitusController.muokkaaMerkintaa(null, harjKohdalla);
     }
 
 
@@ -125,6 +116,7 @@ public class SalipaivakirjaGUIController implements Initializable {
     // ======================================================================
     // ======================================================================
     Spvk spvk;
+    private Harjoitus harjKohdalla;
 
     /**
      * Tietojen tallennus
@@ -203,7 +195,10 @@ public class SalipaivakirjaGUIController implements Initializable {
         }
         kuvaaja1Valikko.setItems(list);
         kuvaaja2Valikko.setItems(list);
-        hae(5); //nayttaa jotain tietoja ruudulle :)
+        
+        //nayttaa jotain tietoja ruudulle :)
+        hae(1); 
+        treeniValikko.setSelectedIndex(spvk.getHarjoitustenlkm());
     }
 
 
@@ -218,7 +213,7 @@ public class SalipaivakirjaGUIController implements Initializable {
         }
         
         if (!Character.isDigit(harj.getString().charAt(0)))return; //katsotaan alkaako objektin merkkijono numerolla ja jos ei niin kyseessa on liike eika treeni.
-        
+        harjKohdalla=(Harjoitus)harj;
         stringGridTreeni.clear();
         int harj_id = harj.getID();
         try {
@@ -290,10 +285,10 @@ public class SalipaivakirjaGUIController implements Initializable {
 
 
     /**
-     * Hakee harjoituksen tiedot listaan
-     * @param harj_id harjoitus id joka aktivoidaan haun jälkeen
+     * Hakee harjoituksen tietoja ruudulle liikkeesta tai harjoituksesta
+     * @param id liikkeen tai harjoituksen id
      */
-    private void hae(int harj_id) {
+    private void hae(int id) {
         treeniValikko.clear();
 
         int index = 0;
@@ -301,7 +296,7 @@ public class SalipaivakirjaGUIController implements Initializable {
             Harjoitus harjoitus;
             try {
                 harjoitus = spvk.annaHarjoitus(i);
-                if (harjoitus.getharj_id() == harj_id)
+                if (harjoitus.getharj_id() == id)
                     index = i;
                 treeniValikko.add(harjoitus.getpvm(), harjoitus);
             } catch (SailoException e) {
@@ -309,13 +304,12 @@ public class SalipaivakirjaGUIController implements Initializable {
             }
 
         }
-        treeniValikko.setSelectedIndex(index);
         
         for(int i = 0;i<spvk.getLiikkeidenlkm();i++) {
             Liike liike;
             try {
                 liike = spvk.annaLiike(i);
-                if (liike.getID() == harj_id)
+                if (liike.getID() == id)
                     index = i;
                 treeniValikko.add(liike.getString(), liike);
             } catch (SailoException e) {

@@ -3,6 +3,9 @@
  */
 package salipaivakirja;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.collections.ObservableList;
 
 /**
@@ -122,6 +125,21 @@ public class Spvk {
             }
         }
         return sb.toString();
+    }
+    
+    /**
+     * @param harj_id harjoitus id
+     * @return lista harjsis joilla haluttu id
+     * @throws SailoException jos ongelmia
+     */
+    public List<HarjoituksenSisalto> harjsis(int harj_id) throws SailoException{
+        var palautus = new ArrayList<HarjoituksenSisalto>();
+        for(int i=0; i<harjsis.getlkm(); i++) {
+            if (harjsis.anna(i).getHarj_id() == harj_id) {
+                palautus.add(harjsis.anna(i));
+            }
+        }
+        return palautus;
     }
 
 
