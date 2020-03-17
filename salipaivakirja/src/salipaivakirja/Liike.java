@@ -14,7 +14,7 @@ import fi.jyu.mit.ohj2.Mjonot;
  * @version 17.2.2020
  *
  */
-public class Liike implements RekisteroituMerkkijono{
+public class Liike implements RekisteroituMerkkijono {
 
     private int liike_id;
     private String liikkeenNimi = "";
@@ -49,6 +49,8 @@ public class Liike implements RekisteroituMerkkijono{
      * l1.parse("3|kuperkeikka");
      * l1.getLiikkeenNimi()==="kuperkeikka";
      * l1.getLiike_id()===3;
+     * Liike l2 = new Liike();
+     * l2.getLiike_id()-l1.getLiike_id()===1;
      * l1.parse("");
      * l1.getLiikkeenNimi()==="VirheellinenTallennusmuoto";
      * l1.getLiike_id()===-1;
@@ -57,19 +59,21 @@ public class Liike implements RekisteroituMerkkijono{
     @Override
     public void parse(String s) {
         var sb = new StringBuffer(s);
-        this.liike_id = Mjonot.erotaInt(sb, -1);
+        liike_id = Mjonot.erotaInt(sb, -1);
+        if (liike_id >= seuraavaNumero)
+            seuraavaNumero = liike_id + 1;
         if (sb.length() != 0)
             this.liikkeenNimi = sb.deleteCharAt(0).toString();
         else
             this.liikkeenNimi = "VirheellinenTallennusmuoto";
-    }
+    }       
 
 
     /**
      * parametriton muodostaja
      */
     public Liike() {
-        this.liikkeenNimi="kuperkeikka"+Rng.rand(1,1000);
+        this.liikkeenNimi = "kuperkeikka" + Rng.rand(1, 1000);
         rekisteroi();
     }
 
@@ -133,11 +137,23 @@ public class Liike implements RekisteroituMerkkijono{
     public String getLiikkeenNimi() {
         return liikkeenNimi;
     }
-    
-    
+
+
     @Override
     public String toString() {
         return liike_id + "|" + liikkeenNimi;
+    }
+
+
+    @Override
+    public String getString() {
+        return getLiikkeenNimi();
+    }
+
+
+    @Override
+    public int getID() {
+        return getLiike_id();
     }
 
 
@@ -157,18 +173,6 @@ public class Liike implements RekisteroituMerkkijono{
         liike2.rekisteroi();
         liike2.tulosta(System.out);
 
-    }
-
-
-    @Override
-    public String getString() {
-        return getLiikkeenNimi();
-    }
-
-
-    @Override
-    public int getID() {
-        return getLiike_id();
     }
 
 }

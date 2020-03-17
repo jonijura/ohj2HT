@@ -3,8 +3,7 @@
  */
 package salipaivakirja;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
 import javafx.collections.ObservableList;
 
@@ -58,7 +57,7 @@ public class Spvk {
      * @return harjoitus
      * @throws SailoException jos ei loydy
      */
-    public Harjoitus annaHarjoitus(int i) throws SailoException{
+    public Harjoitus annaHarjoitus(int i) throws SailoException {
         return harjoitukset.anna(i);
     }
 
@@ -67,8 +66,9 @@ public class Spvk {
      * @param i paikka, josta harjsis haetaan
      * @return harjsis
      * @throws SailoException jos ei loydy
-     */ 
-    public HarjoituksenSisalto annaHarjoituksenSisalto(int i) throws SailoException {
+     */
+    public HarjoituksenSisalto annaHarjoituksenSisalto(int i)
+            throws SailoException {
         return harjsis.anna(i);
     }
 
@@ -102,7 +102,7 @@ public class Spvk {
      * @return liikkeen nimi
      * @throws SailoException jos ei loydy
      */
-    public String annaLiikkeenNimi(int liike_id) throws SailoException{
+    public String annaLiikkeenNimi(int liike_id) throws SailoException {
         return liikkeet.annaLiike(liike_id).getLiikkeenNimi();
     }
 
@@ -126,20 +126,41 @@ public class Spvk {
         }
         return sb.toString();
     }
-    
+
+
     /**
      * @param harj_id harjoitus id
      * @return lista harjsis joilla haluttu id
      * @throws SailoException jos ongelmia
      */
-    public List<HarjoituksenSisalto> harjsis(int harj_id) throws SailoException{
-        var palautus = new ArrayList<HarjoituksenSisalto>();
-        for(int i=0; i<harjsis.getlkm(); i++) {
+    public Stack<HarjoituksenSisalto> getharjsis(int harj_id)
+            throws SailoException {
+        var palautus = new Stack<HarjoituksenSisalto>();
+        for (int i = 0; i < harjsis.getlkm(); i++) {
             if (harjsis.anna(i).getHarj_id() == harj_id) {
                 palautus.add(harjsis.anna(i));
             }
         }
         return palautus;
+    }
+
+
+    /**
+     * @param harj_id harjoitus id
+     * @return harjoituksen sisallon lkm talla id:lla
+     */
+    public int getharjsislkm(int harj_id) {
+        int lkm = 0;
+        try {
+            for (int i = 0; i < harjsis.getlkm(); i++) {
+                if (harjsis.anna(i).getHarj_id() == harj_id) {
+                    lkm++;
+                }
+            }
+        } catch (SailoException e) {
+            return 1;
+        }
+        return lkm;
     }
 
 
@@ -173,8 +194,8 @@ public class Spvk {
         for (int i = 0; i < harjsis.getlkm(); i++) {
             if (harjsis.anna(i).getLiike_id() == liike_id) {
 
-                String pvm = harjoitukset.annaHarjoitus(harjsis.anna(i).getHarj_id())
-                        .getpvm();
+                String pvm = harjoitukset
+                        .annaHarjoitus(harjsis.anna(i).getHarj_id()).getpvm();
                 sb.append(pvm);
                 sb.append(harjsis.anna(i).tiedostona());
                 sb.append("\n");
@@ -196,45 +217,6 @@ public class Spvk {
 
 
     /**
-     * @param args ei kaytossa
-     */
-    public static void main(String[] args) {
-        Spvk spvk = new Spvk();
-        int koko = 5; // ei saa olla pienempi kuin parametrittoman
-                      // HarjoituksenSisalto() arpoma liike_id!
-
-        System.out
-                .println("==============Lisays ja haku testi==========" + '\n');
-
-        for (int i = 0; i < koko; i++) {
-            spvk.lisaa(new Liike());
-            spvk.lisaa(new HarjoituksenSisalto());
-            spvk.lisaa(new Harjoitus());
-        }
-        try {
-
-        for (int i = 0; i < koko; i++) {
-            spvk.annaHarjoitus(i).tulosta(System.out);
-            spvk.annaLiike(i).tulosta(System.out);
-            spvk.annaHarjoituksenSisalto(i).tulosta(System.out);
-        }
-
-        System.out.println(
-                '\n' + "==============Harjoituksen Sisalto testi==========");
-        System.out.println(spvk.harjsisTiedostona(1));
-
-        System.out.println(
-                "==============Liikkeen harjoitushistoria testi==========");
-        for (int i = 0; i < koko; i++)
-            spvk.annaHarjoituksenSisalto(i).MuutaLiike_id(1);
-        System.out.println(spvk.liikeHistoriaTiedostona(1));
-        } catch(SailoException e) {
-            e.getMessage();
-        }
-    }
-
-
-    /**
      * tallennetaan
      * @throws SailoException jos ei tallennu
      */
@@ -242,7 +224,7 @@ public class Spvk {
         liikkeet.tallenna();
         harjoitukset.tallenna();
         harjsis.tallenna();
-        
+
     }
 
 
@@ -261,8 +243,59 @@ public class Spvk {
      * @param list lista johon liikkeiden nimet kerataan
      * @throws SailoException jos ongelmia
      */
-    public void lisaaLiikkeet(ObservableList<String> list) throws SailoException {
-        for(int i=0;i<liikkeet.getlkm();i++)list.add(liikkeet.anna(i).getLiikkeenNimi());
+    public void lisaaLiikkeet(ObservableList<String> list)
+            throws SailoException {
+        for (int i = 0; i < liikkeet.getlkm(); i++)
+            list.add(liikkeet.anna(i).getLiikkeenNimi());
+    }
+
+
+    /**
+     * @param id haettu id
+     * @return harjoitus, jolla haettu id
+     * @throws SailoException jos ei loydy
+     */
+    public Harjoitus annaHarjoitusID(int id) throws SailoException {
+        return harjoitukset.annaHarjoitus(id);
+    }
+
+
+    /**
+     * @param args ei kaytossa
+     */
+    public static void main(String[] args) {
+        Spvk spvk = new Spvk();
+        int koko = 5; // ei saa olla pienempi kuin parametrittoman
+                      // HarjoituksenSisalto() arpoma liike_id!
+
+        System.out
+                .println("==============Lisays ja haku testi==========" + '\n');
+
+        for (int i = 0; i < koko; i++) {
+            spvk.lisaa(new Liike());
+            spvk.lisaa(new HarjoituksenSisalto());
+            spvk.lisaa(new Harjoitus());
+        }
+        try {
+
+            for (int i = 0; i < koko; i++) {
+                spvk.annaHarjoitus(i).tulosta(System.out);
+                spvk.annaLiike(i).tulosta(System.out);
+                spvk.annaHarjoituksenSisalto(i).tulosta(System.out);
+            }
+
+            System.out.println('\n'
+                    + "==============Harjoituksen Sisalto testi==========");
+            System.out.println(spvk.harjsisTiedostona(1));
+
+            System.out.println(
+                    "==============Liikkeen harjoitushistoria testi==========");
+            for (int i = 0; i < koko; i++)
+                spvk.annaHarjoituksenSisalto(i).MuutaLiike_id(1);
+            System.out.println(spvk.liikeHistoriaTiedostona(1));
+        } catch (SailoException e) {
+            e.getMessage();
+        }
     }
 
 }

@@ -58,7 +58,17 @@ public class SalipaivakirjaGUIController implements Initializable {
      */
     @FXML
     private void handleUusiMerkinta() {
-        uusiMerkinta();
+        SpvkHarjoitusController.uusiMerkinta(null, spvk);
+        //uusiMerkinta();
+    }
+    
+    
+    /**
+     * Käsitellään uuden merkinn�n lisääminen
+     */
+    @FXML
+    private void handleUusiMerkintaTemp() {
+        uusiMerkintaTemp();
     }
 
 
@@ -85,7 +95,7 @@ public class SalipaivakirjaGUIController implements Initializable {
      */
     @FXML
     private void handleMuokkaaMerkintaa() {
-        SpvkHarjoitusController.muokkaaMerkintaa(null, harjKohdalla);
+        SpvkHarjoitusController.muokkaaMerkintaa(null, spvk, harjKohdalla.getharj_id());
     }
 
 
@@ -253,7 +263,7 @@ public class SalipaivakirjaGUIController implements Initializable {
     /**
      * generoidaan uusi merkinta ja lisataan se listalle
      */
-    private void uusiMerkinta() {
+    private void uusiMerkintaTemp() {
         Harjoitus harj = new Harjoitus();
         spvk.lisaa(harj);
         int r = Rng.rand(2,5);
@@ -319,5 +329,6 @@ public class SalipaivakirjaGUIController implements Initializable {
         treeniValikko.setSelectedIndex(index); // tästä tulee muutosviesti joka
                                                // näyttää jäsenen
     }
+
 
 }

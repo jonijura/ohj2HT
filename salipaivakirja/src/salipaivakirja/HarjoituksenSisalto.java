@@ -14,7 +14,7 @@ import kanta.Rng;
  *
  */
 public class HarjoituksenSisalto {
-    
+
     private static final int TKOKO = 6;
     private int sisalto[] = new int[TKOKO]; // id|harj_id|liike_id|sarjoja|toistoja|paino
     private static int seuraavaNumero = 1;
@@ -45,8 +45,8 @@ public class HarjoituksenSisalto {
         this.sisalto[0] = seuraavaNumero;
         seuraavaNumero++;
     }
-    
-    
+
+
     /**
      * muodostetaan harjsis tiedostossa olevasta merkkijonosta
      * @param s merkkijono
@@ -67,8 +67,10 @@ public class HarjoituksenSisalto {
     public void parse(String s) {
         var sb = new StringBuilder(s);
         sb.append("z");
-        for(int i=0;i<TKOKO;i++) {
-            this.sisalto[i]=Mjonot.erota(sb, '|',-1);
+        sisalto[0]=Mjonot.erota(sb, '|', -1);
+        if(sisalto[0]>=seuraavaNumero)seuraavaNumero=sisalto[0]+1;
+        for (int i = 1; i < TKOKO; i++) {
+            this.sisalto[i] = Mjonot.erota(sb, '|', -1);
         }
     }
 
@@ -79,7 +81,8 @@ public class HarjoituksenSisalto {
      * @param harj_id harjoitus id
      */
     public HarjoituksenSisalto(int harj_id) {
-        if(harj_id<1)throw new IndexOutOfBoundsException("harj_id ei voi olla alle 1!");
+        if (harj_id < 1)
+            throw new IndexOutOfBoundsException("harj_id ei voi olla alle 1!");
         this.sisalto[1] = harj_id;
         this.sisalto[0] = seuraavaNumero;
         seuraavaNumero++;
@@ -115,7 +118,7 @@ public class HarjoituksenSisalto {
             tulostus.append(sisalto[i]);
             tulostus.append("|");
         }
-        tulostus.deleteCharAt(tulostus.length()-1);
+        tulostus.deleteCharAt(tulostus.length() - 1);
         out.println(tulostus);
     }
 
@@ -167,16 +170,41 @@ public class HarjoituksenSisalto {
         tiedosto.deleteCharAt(tiedosto.length() - 1);
         return tiedosto.toString();
     }
-    
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(int i : sisalto) {
+        for (int i : sisalto) {
             sb.append(i);
             sb.append("|");
         }
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
+    }
+
+
+    /**
+     * @return paino
+     */
+    public int getPaino() {
+        return sisalto[5];
+    }
+
+
+    /**
+     * @return sarjoja
+     */
+    public int getSarjoja() {
+        return sisalto[3];
+    }
+
+
+    /**
+     * @return toistoja
+     */
+    public int getToistoja() {
+        return sisalto[4];
     }
 
 

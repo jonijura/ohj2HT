@@ -110,7 +110,6 @@ public class Harjoitukset {
     }
     
 
-
     /**
      * luetaan tiedot tiedostosta harjoitukset.dat
      * @throws SailoException jos ei aukea

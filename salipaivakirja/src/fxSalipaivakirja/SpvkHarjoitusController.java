@@ -9,12 +9,14 @@ import fi.jyu.mit.fxgui.ModalControllerInterface;
 import fi.jyu.mit.ohj2.Mjonot;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import salipaivakirja.HarjoituksenSisalto;
 import salipaivakirja.Harjoitus;
+import salipaivakirja.SailoException;
+import salipaivakirja.Spvk;
 
 /**
  * Kontrolleri harjoituksen lisaamiselle (/muokkaukselle)
@@ -23,43 +25,19 @@ import salipaivakirja.Harjoitus;
  *
  */
 public class SpvkHarjoitusController
-        implements ModalControllerInterface<Harjoitus>, Initializable {
+        implements ModalControllerInterface<Spvk>, Initializable {
 
     @FXML
     private GridPane pohja;
 
     @FXML
-    private TextField liike1t, liike2t, liike3t, liike4t, liike5t, liike6t,
-            liike7t, liike8t, liike9t;
-    @FXML
-    private TextField liike1n;
-    @FXML
-    private TextField liike2n;
-    @FXML
-    private TextField liike3n;
-    @FXML
-    private TextField liike4n;
-    @FXML
-    private TextField liike5n;
-    @FXML
-    private TextField liike6n;
-    @FXML
-    private TextField liike7n;
-    @FXML
-    private TextField liike8n;
-    @FXML
-    private TextField liike9n;
-    @FXML
-    private TextField pvm;
-
-    @FXML
     private void handleOK() {
-        boolean vastaus = Dialogs.showQuestionDialog("Lisätäänkö liike?",
-                "Lisätäänkö liike: Leuanveto", "Kyllä", "Ei");
-        if (vastaus) {
-            lisaaLiike();
-        }
-        ModalController.closeStage(pohja);
+        kasitteleOk();
+    }
+    
+    @FXML
+    private void handlePoista() {
+        kasittelePoista();
     }
 
 
@@ -68,12 +46,9 @@ public class SpvkHarjoitusController
         ModalController.closeStage(pohja);
     }
 
-    // ======================================================= //
-    private Harjoitus harjKohdalla;
-    private TextField[][] editHarjSis;
 
     @Override
-    public Harjoitus getResult() {
+    public Spvk getResult() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -87,100 +62,158 @@ public class SpvkHarjoitusController
 
 
     @Override
-    public void setDefault(Harjoitus harj) {
-        harjKohdalla = harj;
-        // naytaHarjoitus(harjKohdalla);
+    public void setDefault(Spvk spvk2) {
+        spvk = spvk2;
+        if(muokattavaHarjID>=0)naytaHarjoitus();
     }
 
 
-    private void naytaHarjoitus(Harjoitus harj) {
+    @Override
+    public void initialize(URL arg0, ResourceBundle arg1) {
+        alusta();
+
+    }
+
+    // ======================================================= //
+    private Spvk spvk;
+    private TextField[][] editHarjSis;
+    private static int muokattavaHarjID;
+    private static int liikkeidenLkm;
+
+    /**
+     * alustetaan dialogi, jossa on kayttajan pyytama maara kenttia liikkeille
+     */
+    private void alusta() {
+        //liikkeidenLkm = Mjonot.erotaInt(Dialogs.showInputDialog("Montako Liiketta?", "emt"), 1);
+      editHarjSis = luoKentat();
+    }
+
+
+    /**
+     * Ok painettu suljetaan dialogi
+     * TODO tallenna muutokset
+     */
+    private void kasitteleOk() {
+        // if(syoteKelpaa)return;
+        // SalipaivakirjaGUIController.poistaHarjsis(harjKohdalla.getharj_id());
+
+        ModalController.closeStage(pohja);
+    }
+    
+    
+    /**
+     * poista painettu, poistetaan harj tiedot
+     * TODO
+     */
+    private void kasittelePoista() {
+        ModalController.closeStage(pohja);
+    }
+
+
+    /**
+     * TODO
+     * Naytetaan harjoituksen tiedot muokkaus ikkunassa
+     * @param harj Hajoitus
+     */
+    private void naytaHarjoitus() {
+        try {
+        Harjoitus harj=null;
+        try {
+            harj = spvk.annaHarjoitusID(muokattavaHarjID);
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog(e.getMessage());
+        }
         if (harj == null) {
-            Dialogs.showMessageDialog("Jasenta ei ole valittu");
+            Dialogs.showMessageDialog("Harjoitusta ei ole valittu");
             return;
         }
-        pvm.setText(harj.getpvm());
-        // spvk.getharjsis(harj);
+        editHarjSis[liikkeidenLkm][0].setText(harj.getpvm());
 
-        int i = 0;
-        for (TextField[] tx : editHarjSis)
-            for (TextField t : tx) {
-                if (t == null)
-                    break;
-                t.setText(Integer.toString(i));
-                i++;
-            }
-    }
+        var sisalto = spvk.getharjsis(harj.getharj_id());
+        if(sisalto==null)return;
+        if(sisalto.empty())Dialogs.showMessageDialog("harjoituksesta ei loytynyt sisaltoa spvk hc 121");
+        
+        HarjoituksenSisalto harjsis;
+        for (int i=0; i < liikkeidenLkm; i++)
+        {
+            harjsis = sisalto.pop();
+            editHarjSis[liikkeidenLkm-1-i][0].setText(spvk.annaLiikkeenNimi(harjsis.getLiike_id()));
+            editHarjSis[liikkeidenLkm-1-i][1].setText(""+harjsis.getSarjoja());
+            editHarjSis[liikkeidenLkm-1-i][2].setText(""+harjsis.getToistoja());
+            editHarjSis[liikkeidenLkm-1-i][3].setText(""+harjsis.getPaino());
+        }
+        }catch(SailoException e) {
+            //
+        }
 
-
-    private void lisaaLiike() {
-        // TODO Auto-generated method stub
     }
 
 
     /**
      * muokataan harjoitusmerkintaa
      * @param modalitystage minka paalle dialogi laitetaan
-     * @param harj dialogin harjoitus
+     * @param spvk salipaivakirja, jota muokataan
+     * @param harj_id muokattavan harjoituksen id
      */
-    public static void muokkaaMerkintaa(Stage modalitystage, Harjoitus harj) {
+    public static void muokkaaMerkintaa(Stage modalitystage, Spvk spvk,
+            int harj_id) {
+        muokattavaHarjID = harj_id;
+        liikkeidenLkm = spvk.getharjsislkm(muokattavaHarjID);
         ModalController.showModal(
                 SalipaivakirjaGUIController.class
-                        .getResource("HarjLisays2.fxml"),//"HarjoituksenLisaysView.fxml"
-                "Harjoitus", modalitystage, harj, null);
+                        .getResource("HarjLisays2.fxml"),
+                "Muokkaa merkintää", modalitystage, spvk, null);
+
+    }
+    
+    /**
+     * luodaan uusi merkinta
+     * @param modalitystage minka paalle dialogi laitetaan
+     * @param spvk salipaivakirja, jota muokataan
+     */
+    public static void uusiMerkinta(Stage modalitystage, Spvk spvk) {
+        muokattavaHarjID=-1;
+        String syote = Dialogs.showInputDialog("Montako Liiketta?", "2");
+        if(syote==null)return;
+        liikkeidenLkm = Math.min(10, Math.abs(Mjonot.erotaInt(syote, 1)));
+        ModalController.showModal(
+                SalipaivakirjaGUIController.class
+                        .getResource("HarjLisays2.fxml"),
+                "Muokkaa merkintää", modalitystage, spvk, null);
 
     }
 
 
-    @Override
-    public void initialize(URL arg0, ResourceBundle arg1) {
-        /*
-        editHarjSis = new TextField[][] { { liike1n, liike1t },
-                { liike2n, liike2t }, { liike3n, liike3t },
-                { liike4n, liike4t }, { liike5n, liike5t },
-                { liike6n, liike6t }, { liike7n, liike7t },
-                { liike8n, liike8t }, { liike9n, liike9t } };
-                */
-
-        int i = Mjonot.erotaInt(Dialogs.showInputDialog("montako", "emt"), 4);
-
-        editHarjSis = luoKentat(i);
-        /*
-         * for (TextField edit : edits) if ( edit != null )
-         * edit.setOnKeyReleased( e ->
-         * kasitteleMuutosJaseneen((TextField)(e.getSource())));
-         * panelJasen.setFitToHeight(true);
-         */
-
-    }
-
-
-    private TextField[][] luoKentat(int koko) {
+    /**
+     * luodaan kentat kayttajan syotteelle
+     * @param liikkeidenLkm kenttien maara
+     * @return taulukko kenttien id-eille
+     */
+    private TextField[][] luoKentat() {
         pohja.getChildren().clear();
 
-        TextField[][] edits = new TextField[koko+1][4];
+        TextField[][] edits = new TextField[liikkeidenLkm + 1][4];
 
         pohja.add(new Label("Liikkeen Nimi"), 1, 0);
         pohja.add(new Label("Sarjoja"), 2, 0);
         pohja.add(new Label("Toistoja"), 3, 0);
         pohja.add(new Label("Paino"), 4, 0);
 
-        for (int i = 1; i <= koko; i++) {
+        for (int i = 1; i <= liikkeidenLkm; i++) {
             Label label = new Label("Liike: " + i);
             pohja.add(label, 0, i);
             for (int j = 1; j <= 4; j++) {
                 TextField edit = new TextField();
-                edits[i-1][j-1] = edit;
-                edit.setId("e"+j);
+                edits[i - 1][j - 1] = edit;
+                edit.setId("e" + j);
                 pohja.add(edit, j, i);
             }
         }
-        pohja.add(new Label("pvm"), 1, koko+1);
+        pohja.add(new Label("pvm"), 1, liikkeidenLkm + 1);
         TextField editpvm = new TextField();
-        edits[koko][0] = editpvm;
+        edits[liikkeidenLkm][0] = editpvm;
         editpvm.setId("pvm");
-        pohja.add(editpvm, 2, koko+1);
-        //pohja.add(new Button("Ok"), 3, koko+1);
-        //pohja.add(new Button("Cancel"), 4, koko+1);
+        pohja.add(editpvm, 2, liikkeidenLkm + 1);
 
         return edits;
     }

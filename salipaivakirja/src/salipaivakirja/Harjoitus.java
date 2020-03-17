@@ -111,11 +111,20 @@ public class Harjoitus implements RekisteroituMerkkijono{
     
     /**
      * @param s tiedoston merkkijono
+     * @example
+     * <pre name="test">
+     * Harjoitus harj = new Harjoitus();
+     * harj.parse("4|1.2.2020");
+     * harj.toString()==="4|1.2.2020";
+     * Harjoitus harj2 = new Harjoitus();
+     * harj2.getID()-harj.getID()===1;
+     * </pre>
      */
     @Override
     public void parse(String s) {
         var sb = new StringBuilder(s);
         harj_id=Mjonot.erota(sb, '|', 0);
+        if(harj_id>=seuraavaNumero)seuraavaNumero=harj_id+1;
         pvm = Mjonot.erota(sb,'|',"0.0.0000");
     }
 
