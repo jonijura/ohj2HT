@@ -29,6 +29,8 @@ public class SpvkHarjoitusController
 
     @FXML
     private GridPane pohja;
+    @FXML
+    private Label labelVirhe;
 
     @FXML
     private void handleOK() {
@@ -86,7 +88,22 @@ public class SpvkHarjoitusController
     private void alusta() {
         //liikkeidenLkm = Mjonot.erotaInt(Dialogs.showInputDialog("Montako Liiketta?", "emt"), 1);
       editHarjSis = luoKentat();
+      for(TextField[] edits : editHarjSis) {
+          for(TextField edit:edits) {
+              if(edit!=null)edit.setOnKeyReleased( e -> kasitteleMuutos((TextField)(e.getSource())));
+          }
+      }
     }
+
+
+    private void kasitteleMuutos(TextField edit) {
+        edit.getStylesheets().add(this.getClass().getResource("salipaivakirja.css").toExternalForm());
+        String s = edit.getText();
+        if(s.contains("a"))edit.getStyleClass().add("virhe");
+        for(String st:edit.getStyleClass())
+        System.out.println(st);
+    }
+
 
 
     /**
@@ -205,7 +222,7 @@ public class SpvkHarjoitusController
             for (int j = 1; j <= 4; j++) {
                 TextField edit = new TextField();
                 edits[i - 1][j - 1] = edit;
-                edit.setId("e" + j);
+                edit.setId("e" + j +""+ i);
                 pohja.add(edit, j, i);
             }
         }

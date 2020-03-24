@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,7 +18,7 @@ import java.util.Scanner;
  * @version 18.2.2020
  *
  */
-public class HarjoituksienSisalto{
+public class HarjoituksienSisalto implements Iterable<HarjoituksenSisalto>{
 
     private List<HarjoituksenSisalto> harjsis = new ArrayList<>();
 
@@ -83,10 +84,10 @@ public class HarjoituksienSisalto{
 
     /**
      * tallennetaan harjoituksiensisallot.dat tiedostoon
+     * @param tiedNimi tiedosto, jonne tallennetaan
      * @throws SailoException jos ei aukea
      */
-    public void tallenna() throws SailoException {
-        String tiedNimi = "harjsis.dat";
+    public void tallenna(String tiedNimi) throws SailoException {
         try (PrintStream fo = new PrintStream(
                 new FileOutputStream(tiedNimi, false))) {
             for (int i = 0; i < getlkm(); i++) {
@@ -102,10 +103,10 @@ public class HarjoituksienSisalto{
     
     /**
      * luetaan tiedosto harjoituksenSisalto.dat
+     * @param tiedNimi tiedosto, joka luetaan
      * @throws SailoException jos ei aukea
      */
-    public void lueTiedosto() throws SailoException {
-        String tiedNimi = "harjsis.dat";
+    public void lueTiedosto(String tiedNimi) throws SailoException {
         try (Scanner fi = new Scanner(new FileInputStream(new File(tiedNimi)))) {
             while ( fi.hasNext() ) {
                 try {
@@ -122,6 +123,12 @@ public class HarjoituksienSisalto{
             throw new SailoException("Tiedosto " + tiedNimi + " ei aukea");
         }
         
+    }
+    
+
+    @Override
+    public Iterator<HarjoituksenSisalto> iterator() {
+        return harjsis.iterator();
     }
 
 

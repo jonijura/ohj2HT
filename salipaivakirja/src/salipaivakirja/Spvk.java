@@ -114,13 +114,12 @@ public class Spvk {
      */
     public String harjsisTiedostona(int harj_id) throws SailoException {
         StringBuilder sb = new StringBuilder("\n");
-        for (int i = 0; i < harjsis.getlkm(); i++) {
-            if (harjsis.anna(i).getHarj_id() == harj_id) {
+        for (HarjoituksenSisalto hs : harjsis) {
+            if (hs.getHarj_id() == harj_id) {
 
-                String liikkeenNimi = annaLiikkeenNimi(
-                        harjsis.anna(i).getLiike_id());
+                String liikkeenNimi = annaLiikkeenNimi(hs.getLiike_id());
                 sb.append(liikkeenNimi);
-                sb.append(harjsis.anna(i).tiedostona());
+                sb.append(hs.tiedostona());
                 sb.append("\n");
             }
         }
@@ -131,14 +130,12 @@ public class Spvk {
     /**
      * @param harj_id harjoitus id
      * @return lista harjsis joilla haluttu id
-     * @throws SailoException jos ongelmia
      */
-    public Stack<HarjoituksenSisalto> getharjsis(int harj_id)
-            throws SailoException {
+    public Stack<HarjoituksenSisalto> getharjsis(int harj_id) {
         var palautus = new Stack<HarjoituksenSisalto>();
-        for (int i = 0; i < harjsis.getlkm(); i++) {
-            if (harjsis.anna(i).getHarj_id() == harj_id) {
-                palautus.add(harjsis.anna(i));
+        for (HarjoituksenSisalto hs : harjsis) {
+            if (hs.getHarj_id() == harj_id) {
+                palautus.add(hs);
             }
         }
         return palautus;
@@ -151,14 +148,10 @@ public class Spvk {
      */
     public int getharjsislkm(int harj_id) {
         int lkm = 0;
-        try {
-            for (int i = 0; i < harjsis.getlkm(); i++) {
-                if (harjsis.anna(i).getHarj_id() == harj_id) {
-                    lkm++;
-                }
+        for (HarjoituksenSisalto hs : harjsis) {
+            if (hs.getHarj_id() == harj_id) {
+                lkm++;
             }
-        } catch (SailoException e) {
-            return 1;
         }
         return lkm;
     }
@@ -191,13 +184,13 @@ public class Spvk {
      */
     public String liikeHistoriaTiedostona(int liike_id) throws SailoException {
         StringBuilder sb = new StringBuilder("\n");
-        for (int i = 0; i < harjsis.getlkm(); i++) {
-            if (harjsis.anna(i).getLiike_id() == liike_id) {
+        for (HarjoituksenSisalto hs : harjsis) {
+            if (hs.getLiike_id() == liike_id) {
 
                 String pvm = harjoitukset
-                        .annaHarjoitus(harjsis.anna(i).getHarj_id()).getpvm();
+                        .annaHarjoitus(hs.getHarj_id()).getpvm();
                 sb.append(pvm);
-                sb.append(harjsis.anna(i).tiedostona());
+                sb.append(hs.tiedostona());
                 sb.append("\n");
             }
         }
@@ -221,9 +214,9 @@ public class Spvk {
      * @throws SailoException jos ei tallennu
      */
     public void tallenna() throws SailoException {
-        liikkeet.tallenna();
-        harjoitukset.tallenna();
-        harjsis.tallenna();
+        liikkeet.tallenna("liikkeet.dat");
+        harjoitukset.tallenna("harjoitukset.dat");
+        harjsis.tallenna("harjsis.dat");
 
     }
 
@@ -233,20 +226,18 @@ public class Spvk {
      * @throws SailoException jos ei loydy
      */
     public void lueTiedosto() throws SailoException {
-        liikkeet.lueTiedosto();
-        harjoitukset.lueTiedosto();
-        harjsis.lueTiedosto();
+        liikkeet.lueTiedosto("liikkeet.dat");
+        harjoitukset.lueTiedosto("harjoitukset.dat");
+        harjsis.lueTiedosto("harjsis.dat");
     }
 
 
     /**
      * @param list lista johon liikkeiden nimet kerataan
-     * @throws SailoException jos ongelmia
      */
-    public void lisaaLiikkeet(ObservableList<String> list)
-            throws SailoException {
-        for (int i = 0; i < liikkeet.getlkm(); i++)
-            list.add(liikkeet.anna(i).getLiikkeenNimi());
+    public void lisaaLiikkeet(ObservableList<String> list) {
+        for (Liike l : liikkeet)// int i = 0; i < liikkeet.getlkm(); i++
+            list.add(l.getLiikkeenNimi());
     }
 
 

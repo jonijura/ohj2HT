@@ -28,6 +28,13 @@ public class SalipaivakirjaMain extends Application {
 	        
 	        // Platform.setImplicitExit(false); // jos tämän laittaa, pitää itse sulkea
 	        
+	        /*
+	           FXMLLoader ldr2 = new FXMLLoader(getClass().getResource("HarjLisays2.fxml"));
+	            final Pane root2 = (Pane)ldr2.load();      
+	            final Scene scene2 = new Scene(root2);
+	            scene2.getStylesheets().add(getClass().getResource("salipaivakirja.css").toExternalForm());
+            */
+	        
 	        Spvk spvk = new Spvk();
 	        salipaivakirjaCtrl.setSpvk(spvk);
 	        

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package salipaivakirja;
 
 import java.io.File;
@@ -8,15 +5,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.Iterator;
 import java.util.Scanner;
 
 /**
- * TODO: muuta taulukon kokoa kun tila loppuu
  * @author Joona1
  * @version 17.2.2020
  *
  */
-public class Liikkeet {
+public class Liikkeet implements Iterable<Liike> {
 
     private static final int MAX_LIIKKEITA = 5;
     private int lkm = 0;
@@ -107,47 +104,14 @@ public class Liikkeet {
     }
 
 
-    /**
-     * @param args ei kaytossa
-     */
-    public static void main(String[] args) {
-        Liikkeet liikkeet = new Liikkeet();
-
-        Liike liike1 = new Liike("Kyykky", true);
-        Liike liike2 = new Liike("Penkkipunnerrus", true);
-        liikkeet.lisaa(liike1);
-        liikkeet.lisaa(liike2);
-        System.out.println(liikkeet.taulukonKoko());
-
-        for (int i = 0; i < 5; i++) {
-            Liike liike = new Liike();
-            liike.rekisteroi();
-            liike.taytaLiikeTiedoilla();
-            liikkeet.lisaa(liike);
-        }
-        System.out.println(liikkeet.taulukonKoko());
-
-        System.out.println("==============Liikkeet testi==========");
-        try {
-
-        for (int i = 0; i < liikkeet.getlkm(); i++) {
-            Liike liike = liikkeet.anna(i);
-            System.out.println("liikkeen nro: " + i);
-            liike.tulosta(System.out);
-        }
-        liikkeet.annaLiike(3).tulosta(System.out);
-        }catch (SailoException e) {
-            e.getMessage();
-        }
-    }
 
 
     /**
      * tallennetaan liikkeet.dat tiedostoon
+     * @param tiedNimi tiedosto, johon tallennetaan
      * @throws SailoException jos ei aukuea
      */
-    public void tallenna() throws SailoException {
-        String tiedNimi = "liikkeet.dat";
+    public void tallenna(String tiedNimi) throws SailoException {
         try (PrintStream fo = new PrintStream(new FileOutputStream(tiedNimi, false))) {
             for (int i = 0; i < lkm; i++) {
                 fo.println(anna(i).toString());
@@ -185,11 +149,43 @@ public class Liikkeet {
 
 
     /**
-     * luetaan tiedosto liikkeet.dat
-     * @throws SailoException  jos ei aukea
+     * Lukee liikkeet tiedostosta.
+     * @param tiedNimi luettavan tiedoston nimi
+     * @throws SailoException jos lukeminen epäonnistuu
+     * 
+     * @example
+     * <pre name="test">
+     * #THROWS SailoException 
+     * #import java.io.File;
+     * #import java.util.Iterator;
+     *  Liikkeet liikkeet = new Liikkeet();
+     *  Liike l1 = new Liike("leuanveto"); 
+     *  Liike l2 = new Liike("kyykky"); 
+     *  Liike l3 = new Liike("penkkipunnerrus"); 
+     *  Liike l4 = new Liike("kuperkeikka"); 
+     *  Liike l5 = new Liike("alatalja"); 
+     *  String tiedNimi = "liikkeetTesti";
+     *  File ftied = new File(tiedNimi);
+     *  ftied.delete()===true;
+     *  liikkeet.lueTiedosto(tiedNimi); #THROWS SailoException
+     *  liikkeet.lisaa(l1);
+     *  liikkeet.lisaa(l2);
+     *  liikkeet.lisaa(l3);
+     *  liikkeet.lisaa(l4);
+     *  liikkeet.lisaa(l5);
+     *  liikkeet.tallenna(tiedNimi);
+     *  liikkeet = new Liikkeet();
+     *  liikkeet.lueTiedosto(tiedNimi);
+     *  Iterator<Liike> i = liikkeet.iterator();
+     *  i.next().toString() === l1.toString();
+     *  i.next().toString() === l2.toString();
+     *  i.next().toString() === l3.toString();
+     *  i.next().toString() === l4.toString();
+     *  i.next().toString() === l5.toString();
+     *  i.hasNext() === false;
+     * </pre>
      */
-    public void lueTiedosto() throws SailoException {
-        String tiedNimi = "liikkeet.dat";
+    public void lueTiedosto(String tiedNimi) throws SailoException {
         try (Scanner fi = new Scanner(new FileInputStream(new File(tiedNimi)))) { // Jotta UTF8/ISO-8859 toimii
             while ( fi.hasNext() ) {
                 try {
@@ -207,6 +203,71 @@ public class Liikkeet {
         }
        
         
+    }
+    
+    /**
+     * iteraattori liikkeille
+     * @author Joona1
+     * @version 24.3.2020
+     *
+     */
+    public class LiikeIterator implements Iterator<Liike>{
+        private int kohdalla = 0;
+        @Override
+        public boolean hasNext() {
+            return kohdalla<lkm;
+        }
+
+        @Override
+        public Liike next() {
+            return alkiot[kohdalla++];
+        }
+        
+    }
+    
+    /**
+     * Palautetaan iteraattori liikkeille.
+     * @return liike iteraattori
+     */
+    @Override
+    public Iterator<Liike> iterator() {
+        return new LiikeIterator();
+    }
+
+    
+
+    /**
+     * @param args ei kaytossa
+     */
+    public static void main(String[] args) {
+        Liikkeet liikkeet = new Liikkeet();
+
+        Liike liike1 = new Liike("Kyykky", true);
+        Liike liike2 = new Liike("Penkkipunnerrus", true);
+        liikkeet.lisaa(liike1);
+        liikkeet.lisaa(liike2);
+        System.out.println(liikkeet.taulukonKoko());
+
+        for (int i = 0; i < 5; i++) {
+            Liike liike = new Liike();
+            liike.rekisteroi();
+            liike.taytaLiikeTiedoilla();
+            liikkeet.lisaa(liike);
+        }
+        System.out.println(liikkeet.taulukonKoko());
+
+        System.out.println("==============Liikkeet testi==========");
+        try {
+
+        for (int i = 0; i < liikkeet.getlkm(); i++) {
+            Liike liike = liikkeet.anna(i);
+            System.out.println("liikkeen nro: " + i);
+            liike.tulosta(System.out);
+        }
+        liikkeet.annaLiike(3).tulosta(System.out);
+        }catch (SailoException e) {
+            e.getMessage();
+        }
     }
 
 

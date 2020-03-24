@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,7 +18,7 @@ import java.util.Scanner;
  * @version 18.2.2020
  *
  */
-public class Harjoitukset {
+public class Harjoitukset implements Iterable<Harjoitus> {
 
     private List<Harjoitus> harjoitukset = new ArrayList<>();
 
@@ -94,10 +95,10 @@ public class Harjoitukset {
 
     /**
      * tallennetaan harjoitukset.dat tiedostoon
+     * @param tiedNimi tiedosto, jonne tallennetaan
      * @throws SailoException jos ei aukea
      */
-    public void tallenna() throws SailoException {
-        String tiedNimi = "harj.dat";
+    public void tallenna(String tiedNimi) throws SailoException {
         try (PrintStream fo = new PrintStream(new FileOutputStream(tiedNimi, false))) {
             for (int i = 0; i < getlkm(); i++) {
                 fo.println(anna(i).toString());
@@ -112,10 +113,10 @@ public class Harjoitukset {
 
     /**
      * luetaan tiedot tiedostosta harjoitukset.dat
+     * @param tiedNimi tiedosto, jonne tallennetaan
      * @throws SailoException jos ei aukea
      */
-    public void lueTiedosto() throws SailoException {
-        String tiedNimi = "harj.dat";
+    public void lueTiedosto(String tiedNimi) throws SailoException {
         try (Scanner fi = new Scanner(new FileInputStream(new File(tiedNimi)))) { // Jotta UTF8/ISO-8859 toimii
             while ( fi.hasNext() ) {
                 try {
@@ -133,6 +134,14 @@ public class Harjoitukset {
         }
         
     }
+    
+
+    @Override
+    public Iterator<Harjoitus> iterator() {
+        return harjoitukset.iterator();
+    }
+
+
 
     /**
      * @param args ei kaytossa
@@ -159,7 +168,6 @@ public class Harjoitukset {
             
         }
     }
-
 
 
 

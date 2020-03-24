@@ -157,7 +157,6 @@ public class SalipaivakirjaGUIController implements Initializable {
         boolean b = Dialogs.showQuestionDialog("Apua",
                 "Haluatko avata ohjelman" + " suunnitelman selaimella?",
                 "kyllä", "Ei");
-
         if (b) {
             Desktop desktop = Desktop.getDesktop();
             try {
@@ -180,6 +179,11 @@ public class SalipaivakirjaGUIController implements Initializable {
         treeniValikko.clear();
         stringGridTreeni.clear();
         stringGridLiike.clear();
+        /* TODO poista kun saat virheen toimimaan
+        hakuKentta.getStyleClass().add("virhe");
+        for(String st:hakuKentta.getStyleClass())
+            System.out.println(st);
+            */
 
         treeniValikko.addSelectionListener(e -> naytaTreeni());
         treeniValikko.addSelectionListener(e -> naytaLiike());
@@ -198,15 +202,13 @@ public class SalipaivakirjaGUIController implements Initializable {
         } catch (SailoException e) {
             Dialogs.showMessageDialog(e.getMessage());
         }
-        try {
-            spvk.lisaaLiikkeet(list);
-        } catch (SailoException e) {
-            Dialogs.showMessageDialog(e.getMessage());
-        }
+
+        spvk.lisaaLiikkeet(list);
+
         kuvaaja1Valikko.setItems(list);
         kuvaaja2Valikko.setItems(list);
         
-        //nayttaa jotain tietoja ruudulle :)
+        //nayttaa jotain tietoja ruudulle
         hae(1); 
         treeniValikko.setSelectedIndex(spvk.getHarjoitustenlkm());
     }
@@ -226,6 +228,7 @@ public class SalipaivakirjaGUIController implements Initializable {
         harjKohdalla=(Harjoitus)harj;
         stringGridTreeni.clear();
         int harj_id = harj.getID();
+
         try {
             stringGridTreeni.setRivit(harj.getString() + "|sarjoja|toistoja|paino"
                     + spvk.harjsisTiedostona(harj_id));
