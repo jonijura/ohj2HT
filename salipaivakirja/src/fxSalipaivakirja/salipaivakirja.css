@@ -8,3 +8,8 @@
    /* @SuppressWarning */
    -fx-background-color: red;
  }
+ 
+ .varoitus {
+   /* @SuppressWarning */
+   -fx-background-color: yellow;
+ }

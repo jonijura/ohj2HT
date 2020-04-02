@@ -202,10 +202,36 @@ public class Spvk {
      * katsotaan onko liike uusi vai onko se jokin edellisista
      * @param s liikkeen nimi
      * @return onko liike uusi
+     */
+    public boolean onkoUusiLiike(String s){
+        return liikkeet.onkoUusi(s);
+    }
+    
+
+
+    /**
+     * tarkistetaan onko liike kirjoitettu oikein ja loytyyko sita viela
+     * tiedostosta
+     * @param s liikkeen nimi
+     * @return virhe
+     */
+    public String TarkistaLiike(String s) {
+        if(s.contains("|"))return "Liikkeen nimessä vääriä merkkejä";
+        if(liikkeet.onkoUusi(s))return "UusiLiike: \""+s+"\"";
+        return null;
+    }
+    
+    
+
+    /**
+     * poistaa harjoitusid:ta vastaavan harjoituksen
+     * seka siihen liittyvan harjoiteksensisallon
+     * @param id harjid
      * @throws SailoException jos ongelmia
      */
-    public boolean onkoUusiLiike(String s) throws SailoException {
-        return liikkeet.onkoUusi(s);
+    public void poistaHarjoitus(int id) throws SailoException {
+        harjoitukset.poista(id);
+        for(HarjoituksenSisalto hs : harjsis)if(hs.getHarj_id()==id)harjsis.poista(hs.get_id());
     }
 
 
@@ -226,9 +252,9 @@ public class Spvk {
      * @throws SailoException jos ei loydy
      */
     public void lueTiedosto() throws SailoException {
-        liikkeet.lueTiedosto("liikkeet.dat");
-        harjoitukset.lueTiedosto("harjoitukset.dat");
-        harjsis.lueTiedosto("harjsis.dat");
+        liikkeet.lueTiedosto("../"+"liikkeet.dat");
+        harjoitukset.lueTiedosto("../"+"harjoitukset.dat");
+        harjsis.lueTiedosto("../"+"harjsis.dat");
     }
 
 
@@ -236,9 +262,25 @@ public class Spvk {
      * @param list lista johon liikkeiden nimet kerataan
      */
     public void lisaaLiikkeet(ObservableList<String> list) {
-        for (Liike l : liikkeet)// int i = 0; i < liikkeet.getlkm(); i++
+        for (Liike l : liikkeet)
             list.add(l.getLiikkeenNimi());
     }
+    
+    
+
+    /**
+     * @return viimeisimpänä lisatyn harjoituksen harjId
+     */
+    public int viimeisinHarjoitusID() {
+        try {
+            return harjoitukset.anna(harjoitukset.getlkm()-1).getharj_id();
+        } catch (SailoException e) {
+            //ei tule tapahtumaan
+        }
+        return 1;
+    }
+
+
 
 
     /**
@@ -288,5 +330,8 @@ public class Spvk {
             e.getMessage();
         }
     }
+
+
+
 
 }

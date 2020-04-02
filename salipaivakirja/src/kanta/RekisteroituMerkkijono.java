@@ -14,6 +14,7 @@ public interface RekisteroituMerkkijono {
     /**
      * rekisteroi merkkijonon
      * @return id
+     * @example
      */
     public int rekisteroi();
 

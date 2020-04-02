@@ -58,11 +58,10 @@ public class SalipaivakirjaGUIController implements Initializable {
      */
     @FXML
     private void handleUusiMerkinta() {
-        SpvkHarjoitusController.uusiMerkinta(null, spvk);
-        //uusiMerkinta();
+        uusiMerkinta();
     }
-    
-    
+
+
     /**
      * Käsitellään uuden merkinn�n lisääminen
      */
@@ -95,7 +94,8 @@ public class SalipaivakirjaGUIController implements Initializable {
      */
     @FXML
     private void handleMuokkaaMerkintaa() {
-        SpvkHarjoitusController.muokkaaMerkintaa(null, spvk, harjKohdalla.getharj_id());
+        SpvkHarjoitusController.muokkaaMerkintaa(null, spvk,
+                harjKohdalla.getharj_id());
     }
 
 
@@ -145,9 +145,20 @@ public class SalipaivakirjaGUIController implements Initializable {
      * @return true jos saa sulkaa sovelluksen, false jos ei
      */
     public boolean voikoSulkea() {
-        //tallenna(); TODO poista kommentit
+        // tallenna(); TODO poista kommentit
         return true;
     }
+    
+    
+
+    /**
+     * luodaan uusi merkinta
+     */
+    private void uusiMerkinta() {
+        SpvkHarjoitusController.uusiMerkinta(null, spvk);
+        hae(spvk.viimeisinHarjoitusID());
+    }
+
 
 
     /**
@@ -179,11 +190,11 @@ public class SalipaivakirjaGUIController implements Initializable {
         treeniValikko.clear();
         stringGridTreeni.clear();
         stringGridLiike.clear();
-        /* TODO poista kun saat virheen toimimaan
-        hakuKentta.getStyleClass().add("virhe");
-        for(String st:hakuKentta.getStyleClass())
-            System.out.println(st);
-            */
+        /*
+         * TODO poista kun saat virheen toimimaan
+         * hakuKentta.getStyleClass().add("virhe"); for(String
+         * st:hakuKentta.getStyleClass()) System.out.println(st);
+         */
 
         treeniValikko.addSelectionListener(e -> naytaTreeni());
         treeniValikko.addSelectionListener(e -> naytaLiike());
@@ -207,9 +218,9 @@ public class SalipaivakirjaGUIController implements Initializable {
 
         kuvaaja1Valikko.setItems(list);
         kuvaaja2Valikko.setItems(list);
-        
-        //nayttaa jotain tietoja ruudulle
-        hae(1); 
+
+        // nayttaa jotain tietoja ruudulle
+        hae(1);
         treeniValikko.setSelectedIndex(spvk.getHarjoitustenlkm());
     }
 
@@ -220,18 +231,22 @@ public class SalipaivakirjaGUIController implements Initializable {
     private void naytaTreeni() {
         var harj = treeniValikko.getSelectedObject();
         if (harj == null) {
-            Dialogs.showMessageDialog("null viite liikkeeseen kohdasta naytaTreeni");
+            Dialogs.showMessageDialog(
+                    "null viite liikkeeseen kohdasta naytaTreeni");
             return;
         }
-        
-        if (!Character.isDigit(harj.getString().charAt(0)))return; //katsotaan alkaako objektin merkkijono numerolla ja jos ei niin kyseessa on liike eika treeni.
-        harjKohdalla=(Harjoitus)harj;
+
+        if (!Character.isDigit(harj.getString().charAt(0)))
+            return; // katsotaan alkaako objektin merkkijono numerolla ja jos ei
+                    // niin kyseessa on liike eika treeni.
+        harjKohdalla = (Harjoitus) harj;
         stringGridTreeni.clear();
         int harj_id = harj.getID();
 
         try {
-            stringGridTreeni.setRivit(harj.getString() + "|sarjoja|toistoja|paino"
-                    + spvk.harjsisTiedostona(harj_id));
+            stringGridTreeni
+                    .setRivit(harj.getString() + "|sarjoja|toistoja|paino"
+                            + spvk.harjsisTiedostona(harj_id));
         } catch (SailoException e) {
             Dialogs.showMessageDialog(e.getMessage());
         }
@@ -245,12 +260,15 @@ public class SalipaivakirjaGUIController implements Initializable {
     private void naytaLiike() {
         var liike = treeniValikko.getSelectedObject();
         if (liike == null) {
-            Dialogs.showMessageDialog("null viite liikkeeseen kohdasta naytaLiike");
+            Dialogs.showMessageDialog(
+                    "null viite liikkeeseen kohdasta naytaLiike");
             return;
         }
-        
-        if (Character.isDigit(liike.getString().charAt(0)))return; //katsotaan alkaako objektin merkkijono numerolla ja jos ei niin kyseessa on liike eika treeni.
-        
+
+        if (Character.isDigit(liike.getString().charAt(0)))
+            return; // katsotaan alkaako objektin merkkijono numerolla ja jos ei
+                    // niin kyseessa on liike eika treeni.
+
         stringGridLiike.clear();
         int liike_id = liike.getID();
         try {
@@ -269,9 +287,10 @@ public class SalipaivakirjaGUIController implements Initializable {
     private void uusiMerkintaTemp() {
         Harjoitus harj = new Harjoitus();
         spvk.lisaa(harj);
-        int r = Rng.rand(2,5);
-        for(int i=0;i<r;i++) {
-            HarjoituksenSisalto harjsis = new HarjoituksenSisalto(harj.getharj_id());
+        int r = Rng.rand(2, 5);
+        for (int i = 0; i < r; i++) {
+            HarjoituksenSisalto harjsis = new HarjoituksenSisalto(
+                    harj.getharj_id());
             spvk.lisaa(harjsis);
         }
         hae(harj.getharj_id());
@@ -283,17 +302,15 @@ public class SalipaivakirjaGUIController implements Initializable {
      * @param s liikkeen nimi
      */
     public void lisaaLiike(String s) {
-        try {
-            if (spvk.onkoUusiLiike(s)) {
-                Liike liike = new Liike(s, true);
-                spvk.lisaa(liike);
-                list.add(s);
-                kuvaaja1Valikko.setItems(list);
-                kuvaaja2Valikko.setItems(list);
-            }
-        } catch (SailoException e) {
-            Dialogs.showMessageDialog(e.getMessage());
+
+        if (spvk.onkoUusiLiike(s)) {
+            Liike liike = new Liike(s, true);
+            spvk.lisaa(liike);
+            list.add(s);
+            kuvaaja1Valikko.setItems(list);
+            kuvaaja2Valikko.setItems(list);
         }
+
     }
 
 
@@ -303,10 +320,11 @@ public class SalipaivakirjaGUIController implements Initializable {
      */
     private void hae(int id) {
         treeniValikko.clear();
-
+        Harjoitus harjoitus;
+        Liike liike;
         int index = 0;
         for (int i = 0; i < spvk.getHarjoitustenlkm(); i++) {
-            Harjoitus harjoitus;
+            
             try {
                 harjoitus = spvk.annaHarjoitus(i);
                 if (harjoitus.getharj_id() == id)
@@ -317,9 +335,9 @@ public class SalipaivakirjaGUIController implements Initializable {
             }
 
         }
-        
-        for(int i = 0;i<spvk.getLiikkeidenlkm();i++) {
-            Liike liike;
+
+        for (int i = 0; i < spvk.getLiikkeidenlkm(); i++) {
+
             try {
                 liike = spvk.annaLiike(i);
                 if (liike.getID() == id)
@@ -332,6 +350,5 @@ public class SalipaivakirjaGUIController implements Initializable {
         treeniValikko.setSelectedIndex(index); // tästä tulee muutosviesti joka
                                                // näyttää jäsenen
     }
-
 
 }

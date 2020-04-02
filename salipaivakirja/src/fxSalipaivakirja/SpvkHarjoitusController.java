@@ -11,12 +11,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import salipaivakirja.HarjoituksenSisalto;
+import kanta.Pvm;
 import salipaivakirja.Harjoitus;
 import salipaivakirja.SailoException;
 import salipaivakirja.Spvk;
+import javafx.scene.control.TextArea;
 
 /**
  * Kontrolleri harjoituksen lisaamiselle (/muokkaukselle)
@@ -28,45 +29,54 @@ public class SpvkHarjoitusController
         implements ModalControllerInterface<Spvk>, Initializable {
 
     @FXML
-    private GridPane pohja;
+    private BorderPane pohja;
+    @FXML
+    private TextArea textAreaHarjSis;
+
+    @FXML
+    private TextField textFieldPVM;
+
+    @FXML
+    private Label labelVaroitus;
+
     @FXML
     private Label labelVirhe;
 
     @FXML
-    private void handleOK() {
-        kasitteleOk();
+    void HandleOK() {
+        kasitteleOK();
     }
-    
+
+
     @FXML
-    private void handlePoista() {
+    void HandlePeruuta() {
+        kasittelePeruuta();
+    }
+
+
+    @FXML
+    void HandlePoista() {
         kasittelePoista();
-    }
-
-
-    @FXML
-    private void handleCancel() {
-        ModalController.closeStage(pohja);
     }
 
 
     @Override
     public Spvk getResult() {
-        // TODO Auto-generated method stub
         return null;
     }
 
 
     @Override
     public void handleShown() {
-        // TODO Auto-generated method stub
-
+        //
     }
 
 
     @Override
     public void setDefault(Spvk spvk2) {
         spvk = spvk2;
-        if(muokattavaHarjID>=0)naytaHarjoitus();
+        if (muokattavaHarjID >= 0)
+            naytaHarjoitus();
     }
 
 
@@ -78,91 +88,133 @@ public class SpvkHarjoitusController
 
     // ======================================================= //
     private Spvk spvk;
-    private TextField[][] editHarjSis;
     private static int muokattavaHarjID;
-    private static int liikkeidenLkm;
 
     /**
      * alustetaan dialogi, jossa on kayttajan pyytama maara kenttia liikkeille
      */
     private void alusta() {
-        //liikkeidenLkm = Mjonot.erotaInt(Dialogs.showInputDialog("Montako Liiketta?", "emt"), 1);
-      editHarjSis = luoKentat();
-      for(TextField[] edits : editHarjSis) {
-          for(TextField edit:edits) {
-              if(edit!=null)edit.setOnKeyReleased( e -> kasitteleMuutos((TextField)(e.getSource())));
-          }
-      }
+        textAreaHarjSis.setOnKeyReleased(e -> kasitteleMuutos((TextArea)(e.getSource())));
+        textFieldPVM.setOnKeyReleased(e -> kasitteleMuutos((TextField)(e.getSource())));
+        labelVirhe.getStylesheets().add(this.getClass().getResource("salipaivakirja.css").toExternalForm());
+        textFieldPVM.getStylesheets().add(this.getClass().getResource("salipaivakirja.css").toExternalForm());
+        labelVaroitus.getStylesheets().add(this.getClass().getResource("salipaivakirja.css").toExternalForm());
     }
 
-
-    private void kasitteleMuutos(TextField edit) {
-        edit.getStylesheets().add(this.getClass().getResource("salipaivakirja.css").toExternalForm());
-        String s = edit.getText();
-        if(s.contains("a"))edit.getStyleClass().add("virhe");
-        for(String st:edit.getStyleClass())
-        System.out.println(st);
+    /**
+     * kutsutaan kun pvm syottokenttaa on muutettu
+     * TODO oikeellisuustarkistukset
+     * @param textField muutettu kentta
+     */
+    private boolean kasitteleMuutos(TextField pvmTxt) {
+        String virhe = Pvm.TarkistaPvm(pvmTxt.getText());
+        if(virhe==null) {
+            labelVirhe.setText("");
+            labelVirhe.getStyleClass().clear();
+            textFieldPVM.getStyleClass().clear();
+            return false;
+        }
+        labelVirhe.setText(virhe);
+        labelVirhe.getStyleClass().add("virhe");
+        textFieldPVM.getStyleClass().add("virhe");
+        return true;
     }
-
 
 
     /**
-     * Ok painettu suljetaan dialogi
-     * TODO tallenna muutokset
+     * kutsutaan kun harjsis syottokenttaa on muutettu.
+     * @param textArea muutettu kentta
      */
-    private void kasitteleOk() {
-        // if(syoteKelpaa)return;
-        // SalipaivakirjaGUIController.poistaHarjsis(harjKohdalla.getharj_id());
-
-        ModalController.closeStage(pohja);
+    private boolean kasitteleMuutos(TextArea harjSisTxt) {
+        String[] sisalto = harjSisTxt.getText().split("[ \n]+");
+        String virhe;
+        boolean varoituksia=false;
+        for(int i=0;i<sisalto.length;i++) {
+            if(i%4==0) {
+                virhe = spvk.TarkistaLiike(sisalto[i]);
+                if(virhe!=null&&virhe.length()!=0) {
+                    if(virhe.charAt(0)=='U') {
+                        labelVaroitus.setText(virhe);
+                        labelVaroitus.getStyleClass().add("varoitus");
+                        varoituksia=true;
+                    }
+                    else {
+                        labelVirhe.setText(virhe);
+                        labelVirhe.getStyleClass().add("virhe");
+                        return true;
+                    }
+                }
+            }
+            else if(!sisalto[i].equals(Integer.toString(Mjonot.erotaInt(sisalto[i], 0)))) {
+                labelVirhe.getStyleClass().add("virhe");
+                labelVirhe.setText("Paikassa, jossa pitäisi olla numero onkin \""+sisalto[i] +"\"");
+                return true;
+            } 
+        }
+        labelVirhe.setText(""+sisalto.length);
+        labelVirhe.getStyleClass().clear();
+        textAreaHarjSis.getStyleClass().clear();
+        if(varoituksia)return false;
+        labelVaroitus.setText(""+sisalto.length);
+        labelVaroitus.getStyleClass().clear();
+        return false;
     }
-    
-    
+
+
+    /**
+     * TODO selvita miksi poistaminen aiheuttaa ongelmia ja muokattu merkinta ei tule valituksi muokkauksen jalkeen
+     * OK painettu suljetaan dialogi
+     */
+    private void kasitteleOK() {
+        if(kasitteleMuutos(textAreaHarjSis)||kasitteleMuutos(textFieldPVM))Dialogs.showMessageDialog("korjaa havaitut virheet");
+        else {
+            /*
+            try {
+                spvk.poistaHarjoitus(muokattavaHarjID);
+            } catch (SailoException e) {
+                Dialogs.showMessageDialog("harjoituksen poistossa ongelmia: "+e.getMessage());
+            }
+            */
+            var harj = new Harjoitus(textFieldPVM.getText(), true);
+            spvk.lisaa(harj);
+            ModalController.closeStage(pohja);
+        }
+    }
+
+
     /**
      * poista painettu, poistetaan harj tiedot
-     * TODO
+     * TODO poista tiedot
      */
     private void kasittelePoista() {
         ModalController.closeStage(pohja);
     }
+    
+    
+    /**
+     * peruuta painettu, suljetaan dialogi
+     */
+    private void kasittelePeruuta() {
+        ModalController.closeStage(pohja);
+    }
 
 
     /**
-     * TODO
      * Naytetaan harjoituksen tiedot muokkaus ikkunassa
-     * @param harj Hajoitus
      */
     private void naytaHarjoitus() {
+        StringBuilder sb=null;
         try {
-        Harjoitus harj=null;
-        try {
-            harj = spvk.annaHarjoitusID(muokattavaHarjID);
+            sb = new StringBuilder(spvk.harjsisTiedostona(muokattavaHarjID));
+            textFieldPVM.setText(spvk.annaHarjoitusID(muokattavaHarjID).getpvm());
         } catch (SailoException e) {
-            Dialogs.showMessageDialog(e.getMessage());
+            Dialogs.showMessageDialog("harjoituksenSisaltoa ei loytynyt"+e.getMessage());
         }
-        if (harj == null) {
-            Dialogs.showMessageDialog("Harjoitusta ei ole valittu");
-            return;
-        }
-        editHarjSis[liikkeidenLkm][0].setText(harj.getpvm());
-
-        var sisalto = spvk.getharjsis(harj.getharj_id());
-        if(sisalto==null)return;
-        if(sisalto.empty())Dialogs.showMessageDialog("harjoituksesta ei loytynyt sisaltoa spvk hc 121");
+        if(sb==null||sb.length()==0)return;
+        sb.deleteCharAt(0);
+        while(sb.indexOf("|")>0)sb.replace(sb.indexOf("|"), sb.indexOf("|")+1, " ");
+        textAreaHarjSis.setText(sb.toString());
         
-        HarjoituksenSisalto harjsis;
-        for (int i=0; i < liikkeidenLkm; i++)
-        {
-            harjsis = sisalto.pop();
-            editHarjSis[liikkeidenLkm-1-i][0].setText(spvk.annaLiikkeenNimi(harjsis.getLiike_id()));
-            editHarjSis[liikkeidenLkm-1-i][1].setText(""+harjsis.getSarjoja());
-            editHarjSis[liikkeidenLkm-1-i][2].setText(""+harjsis.getToistoja());
-            editHarjSis[liikkeidenLkm-1-i][3].setText(""+harjsis.getPaino());
-        }
-        }catch(SailoException e) {
-            //
-        }
-
     }
 
 
@@ -175,63 +227,25 @@ public class SpvkHarjoitusController
     public static void muokkaaMerkintaa(Stage modalitystage, Spvk spvk,
             int harj_id) {
         muokattavaHarjID = harj_id;
-        liikkeidenLkm = spvk.getharjsislkm(muokattavaHarjID);
         ModalController.showModal(
                 SalipaivakirjaGUIController.class
-                        .getResource("HarjLisays2.fxml"),
+                        .getResource("HarjLisays3.fxml"),
                 "Muokkaa merkintää", modalitystage, spvk, null);
 
     }
-    
+
+
     /**
      * luodaan uusi merkinta
      * @param modalitystage minka paalle dialogi laitetaan
      * @param spvk salipaivakirja, jota muokataan
      */
     public static void uusiMerkinta(Stage modalitystage, Spvk spvk) {
-        muokattavaHarjID=-1;
-        String syote = Dialogs.showInputDialog("Montako Liiketta?", "2");
-        if(syote==null)return;
-        liikkeidenLkm = Math.min(10, Math.abs(Mjonot.erotaInt(syote, 1)));
+        muokattavaHarjID = -1;
         ModalController.showModal(
                 SalipaivakirjaGUIController.class
-                        .getResource("HarjLisays2.fxml"),
+                        .getResource("HarjLisays3.fxml"),
                 "Muokkaa merkintää", modalitystage, spvk, null);
 
-    }
-
-
-    /**
-     * luodaan kentat kayttajan syotteelle
-     * @param liikkeidenLkm kenttien maara
-     * @return taulukko kenttien id-eille
-     */
-    private TextField[][] luoKentat() {
-        pohja.getChildren().clear();
-
-        TextField[][] edits = new TextField[liikkeidenLkm + 1][4];
-
-        pohja.add(new Label("Liikkeen Nimi"), 1, 0);
-        pohja.add(new Label("Sarjoja"), 2, 0);
-        pohja.add(new Label("Toistoja"), 3, 0);
-        pohja.add(new Label("Paino"), 4, 0);
-
-        for (int i = 1; i <= liikkeidenLkm; i++) {
-            Label label = new Label("Liike: " + i);
-            pohja.add(label, 0, i);
-            for (int j = 1; j <= 4; j++) {
-                TextField edit = new TextField();
-                edits[i - 1][j - 1] = edit;
-                edit.setId("e" + j +""+ i);
-                pohja.add(edit, j, i);
-            }
-        }
-        pohja.add(new Label("pvm"), 1, liikkeidenLkm + 1);
-        TextField editpvm = new TextField();
-        edits[liikkeidenLkm][0] = editpvm;
-        editpvm.setId("pvm");
-        pohja.add(editpvm, 2, liikkeidenLkm + 1);
-
-        return edits;
     }
 }

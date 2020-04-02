@@ -128,10 +128,8 @@ public class Liikkeet implements Iterable<Liike> {
     /**
      * @param s liikkeen nimi
      * @return onko liiketta viela olemassa
-     * @throws SailoException jos ongelmia
      * @example
      * <pre name="test">
-     *  #THROWS SailoException
      * Liikkeet l = new Liikkeet();
      * l.lisaa(new Liike("kuperkeikka",true));
      * l.onkoUusi("kuperkeikka")===false;
@@ -139,10 +137,14 @@ public class Liikkeet implements Iterable<Liike> {
      * l.onkoUusi("kuperke ikka")===true;
      * </pre>
      */
-    public boolean onkoUusi(String s) throws SailoException {
+    public boolean onkoUusi(String s){
         String st = s.trim();
         for(int i=0;i<lkm;i++) {
-            if(anna(i).getLiikkeenNimi().equalsIgnoreCase(st))return false;
+            try {
+                if(anna(i).getLiikkeenNimi().equalsIgnoreCase(st))return false;
+            } catch (SailoException e) {
+                e.printStackTrace();
+            }
         }
         return true;
     }
@@ -166,7 +168,6 @@ public class Liikkeet implements Iterable<Liike> {
      *  Liike l5 = new Liike("alatalja"); 
      *  String tiedNimi = "liikkeetTesti";
      *  File ftied = new File(tiedNimi);
-     *  ftied.delete()===true;
      *  liikkeet.lueTiedosto(tiedNimi); #THROWS SailoException
      *  liikkeet.lisaa(l1);
      *  liikkeet.lisaa(l2);
@@ -183,6 +184,7 @@ public class Liikkeet implements Iterable<Liike> {
      *  i.next().toString() === l4.toString();
      *  i.next().toString() === l5.toString();
      *  i.hasNext() === false;
+     *  ftied.delete();
      * </pre>
      */
     public void lueTiedosto(String tiedNimi) throws SailoException {
