@@ -14,7 +14,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import kanta.Pvm;
+import salipaivakirja.HarjoituksenSisalto;
 import salipaivakirja.Harjoitus;
+import salipaivakirja.Liike;
 import salipaivakirja.SailoException;
 import salipaivakirja.Spvk;
 import javafx.scene.control.TextArea;
@@ -103,7 +105,6 @@ public class SpvkHarjoitusController
 
     /**
      * kutsutaan kun pvm syottokenttaa on muutettu
-     * TODO oikeellisuustarkistukset
      * @param textField muutettu kentta
      */
     private boolean kasitteleMuutos(TextField pvmTxt) {
@@ -159,23 +160,45 @@ public class SpvkHarjoitusController
         labelVaroitus.getStyleClass().clear();
         return false;
     }
+    
+    
+    /**
+     * lisataan uudet harjoituksen sisallot lukemalla se tekstikentasta
+     */
+    private void lisaaHarjsis(int harj_id) {
+        int[] harjsis = {harj_id,1,1,1,1};
+        String[] sisalto = textAreaHarjSis.getText().split("[ \n]+");
+        for (int i = 0; i < sisalto.length-3; i += 4) {
+            if(spvk.onkoUusiLiike(sisalto[i])<0) {
+                var l = new Liike(sisalto[i],false);
+                int id = l.rekisteroi();
+                spvk.lisaa(l);
+                harjsis[1]=id;
+            }
+            else harjsis[1]=spvk.onkoUusiLiike(sisalto[i]);
+            for(int j=1;j<4;j++) {
+                harjsis[j+1]=Mjonot.erotaInt(sisalto[i+j],0);
+            }
+            var hs = new HarjoituksenSisalto(harjsis);
+            spvk.lisaa(hs);
+        }
+    }
+
 
 
     /**
-     * TODO selvita miksi poistaminen aiheuttaa ongelmia ja muokattu merkinta ei tule valituksi muokkauksen jalkeen
-     * OK painettu suljetaan dialogi
+     * OK painettu suljetaan dialogi ja tallennetaan muutokset
      */
     private void kasitteleOK() {
         if(kasitteleMuutos(textAreaHarjSis)||kasitteleMuutos(textFieldPVM))Dialogs.showMessageDialog("korjaa havaitut virheet");
         else {
-            /*
             try {
                 spvk.poistaHarjoitus(muokattavaHarjID);
             } catch (SailoException e) {
-                Dialogs.showMessageDialog("harjoituksen poistossa ongelmia: "+e.getMessage());
+                Dialogs.showMessageDialog("vanhan harjoituksen poistossa ongelmia: "+e.getMessage());
             }
-            */
             var harj = new Harjoitus(textFieldPVM.getText(), true);
+            lisaaHarjsis(harj.getharj_id());
             spvk.lisaa(harj);
             ModalController.closeStage(pohja);
         }
@@ -184,9 +207,13 @@ public class SpvkHarjoitusController
 
     /**
      * poista painettu, poistetaan harj tiedot
-     * TODO poista tiedot
      */
     private void kasittelePoista() {
+        try {
+            spvk.poistaHarjoitus(muokattavaHarjID);
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog("harjoituksen poistossa ongelmia: "+e.getMessage());
+        }
         ModalController.closeStage(pohja);
     }
     

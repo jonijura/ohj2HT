@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -20,7 +19,7 @@ import java.util.Scanner;
  */
 public class HarjoituksienSisalto implements Iterable<HarjoituksenSisalto>{
 
-    private List<HarjoituksenSisalto> harjsis = new ArrayList<>();
+    private ArrayList<HarjoituksenSisalto> harjsis = new ArrayList<>();
 
     /**
      * TODO kasittele index out of bounds
@@ -36,10 +35,7 @@ public class HarjoituksienSisalto implements Iterable<HarjoituksenSisalto>{
      * h.lisaa(new HarjoituksenSisalto());
      * h.getlkm()===4;
      * h.anna(3).get_id()-h.anna(2).get_id()===1;
-     * h.poista(3)===true;
-     * h.poista(3)===false;
-     * h.getlkm()===3;
-     * h.anna(3); #THROWS SailoException
+     * h.anna(4); #THROWS SailoException
      * </pre>
      */
     public HarjoituksenSisalto anna(int i) throws SailoException {
@@ -68,17 +64,45 @@ public class HarjoituksienSisalto implements Iterable<HarjoituksenSisalto>{
     /**
      * @param id poistettavan harjoituksensisallon id
      * @return poitettiinko mitaan
-     * @throws SailoException jos ongelmia
+     * @example
+     * <pre name="test">
+     * var hs = new HarjoituksienSisalto();
+     * hs.lisaa(new HarjoituksenSisalto("1|1|1|1|1|1"));
+     * hs.lisaa(new HarjoituksenSisalto("2|1|1|1|1|1"));
+     * hs.lisaa(new HarjoituksenSisalto("3|1|1|1|1|1"));
+     * hs.getlkm()===3;
+     * hs.poista(1)===true;
+     * hs.getlkm()===2;
+     * hs.poistaKaikki(1)===2;
+     * hs.getlkm()===0;
+     * </pre>
      */
-    public boolean poista(int id) throws SailoException {
+    public boolean poista(int id){
         boolean b = false;
-        for (int i = 0; i < getlkm(); i++) {
-            if (anna(i).get_id() == id) {
+        for (int i=0;i<harjsis.size();i++) {
+            if (harjsis.get(i).get_id() == id) {
                 harjsis.remove(i);
                 b = true;
             }
         }
         return b;
+    }
+    
+    
+    /**
+     * @param id harj id
+     * @return montako poistettiin
+     */
+    public int poistaKaikki(int id){
+        int lkm = 0;
+        for (int i=0;i<harjsis.size();i++) {
+            if (harjsis.get(i).getHarj_id() == id) {
+                harjsis.remove(i);
+                lkm++;
+                i--;
+            }
+        }
+        return lkm;
     }
 
 

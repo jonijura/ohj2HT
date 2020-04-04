@@ -28,15 +28,19 @@ public class Pvm {
     public static String TarkistaPvm(String pvm) {
         if(pvm==null)return "null viite";
         var sb = new StringBuilder(pvm);
-        int pv=Mjonot.erota(sb, '.',0);
-        int kk=Mjonot.erota(sb, '.',0);
-        int vv=Mjonot.erota(sb, '.',0);
+        int pv=Mjonot.erotaInt(sb,0);
+        if(sb.length()!=0)sb.deleteCharAt(0);
+        int kk=Mjonot.erotaInt(sb,0);
+        if(sb.length()!=0)sb.deleteCharAt(0);
+        int vv=Mjonot.erotaInt(sb,-1);
+        if(sb.length()>0)return "päivämäärässä ylimääräisiä merkkejä: " +sb.toString();
         if(pv==0||kk==0||vv==0)return "anna päivämäärä, erota luvut pisteellä";
         if(kk>12||kk<0)return "kuukausi on virheellinen";       
         int karkaus = 0;
         if(vv%4==0&&vv%400!=0)karkaus++;
         if(KPITUUDET[karkaus][kk]<pv||pv<0)return "päivä virheellinen";
-        if ( vv == 0) return "vuosi puuttuu tai on virheellinen";
+        if ( vv < 0 ) return "vuosi puuttuu tai on virheellinen";
+        if(vv<1990 || vv>2090)return "vuosi on virheellinen";
         return null;
     }
 

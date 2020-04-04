@@ -127,7 +127,7 @@ public class Liikkeet implements Iterable<Liike> {
     
     /**
      * @param s liikkeen nimi
-     * @return onko liiketta viela olemassa
+     * @return liikkeen id, -1 jos ei löydy
      * @example
      * <pre name="test">
      * Liikkeet l = new Liikkeet();
@@ -137,16 +137,16 @@ public class Liikkeet implements Iterable<Liike> {
      * l.onkoUusi("kuperke ikka")===true;
      * </pre>
      */
-    public boolean onkoUusi(String s){
+    public int onkoUusi(String s){
         String st = s.trim();
         for(int i=0;i<lkm;i++) {
             try {
-                if(anna(i).getLiikkeenNimi().equalsIgnoreCase(st))return false;
+                if(anna(i).getLiikkeenNimi().equalsIgnoreCase(st))return anna(i).getID();
             } catch (SailoException e) {
                 e.printStackTrace();
             }
         }
-        return true;
+        return -1;
     }
 
 

@@ -3,9 +3,11 @@
  */
 package salipaivakirja;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 import javafx.collections.ObservableList;
+import kanta.RekisteroituMerkkijono;
 
 /**
  * @author Joona1
@@ -201,9 +203,9 @@ public class Spvk {
     /**
      * katsotaan onko liike uusi vai onko se jokin edellisista
      * @param s liikkeen nimi
-     * @return onko liike uusi
+     * @return liikkeen paikka, -1 jos ei loydy
      */
-    public boolean onkoUusiLiike(String s){
+    public int onkoUusiLiike(String s){
         return liikkeet.onkoUusi(s);
     }
     
@@ -217,7 +219,7 @@ public class Spvk {
      */
     public String TarkistaLiike(String s) {
         if(s.contains("|"))return "Liikkeen nimessä vääriä merkkejä";
-        if(liikkeet.onkoUusi(s))return "UusiLiike: \""+s+"\"";
+        if(liikkeet.onkoUusi(s)<0)return "UusiLiike: \""+s+"\"";
         return null;
     }
     
@@ -228,10 +230,23 @@ public class Spvk {
      * seka siihen liittyvan harjoiteksensisallon
      * @param id harjid
      * @throws SailoException jos ongelmia
+     * @example
+     * <pre name="test">
+     * #THROWS SailoException
+     * Spvk spvk = new Spvk();
+     * var h =  new Harjoitus("1.2.2020", true);
+     * var hs = new HarjoituksenSisalto("1|1|1|1|1|1");
+     * spvk.lisaa(h);
+     * spvk.lisaa(hs);
+     * spvk.getHarjsislkm()===1;
+     * spvk.poistaHarjoitus(h.getID());
+     * spvk.getHarjoitustenlkm()===0;
+     * spvk.getHarjsislkm()===0;
+     * </pre>
      */
     public void poistaHarjoitus(int id) throws SailoException {
         harjoitukset.poista(id);
-        for(HarjoituksenSisalto hs : harjsis)if(hs.getHarj_id()==id)harjsis.poista(hs.get_id());
+        harjsis.poistaKaikki(id);
     }
 
 
@@ -252,9 +267,9 @@ public class Spvk {
      * @throws SailoException jos ei loydy
      */
     public void lueTiedosto() throws SailoException {
-        liikkeet.lueTiedosto("../"+"liikkeet.dat");
-        harjoitukset.lueTiedosto("../"+"harjoitukset.dat");
-        harjsis.lueTiedosto("../"+"harjsis.dat");
+        liikkeet.lueTiedosto("liikkeet.dat");
+        harjoitukset.lueTiedosto("harjoitukset.dat");
+        harjsis.lueTiedosto("harjsis.dat");
     }
 
 
@@ -291,6 +306,19 @@ public class Spvk {
     public Harjoitus annaHarjoitusID(int id) throws SailoException {
         return harjoitukset.annaHarjoitus(id);
     }
+    
+    
+    /**
+     * @param hakuehto .
+     * @return hakuehtoa vastaavat oliot
+     */
+    public ArrayList<RekisteroituMerkkijono> etsi(String hakuehto) {
+        ArrayList<RekisteroituMerkkijono> sisalto = new ArrayList<>();
+        for(Liike l: liikkeet)if(l.getString().toLowerCase().contains(hakuehto.toLowerCase().trim()))sisalto.add(l);
+        for(Harjoitus h: harjoitukset)if(h.getString().contains(hakuehto.trim()))sisalto.add(h);
+        return sisalto;
+    }
+
 
 
     /**
@@ -330,8 +358,4 @@ public class Spvk {
             e.getMessage();
         }
     }
-
-
-
-
 }
