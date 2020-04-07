@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import kanta.*;
 import salipaivakirja.HarjoituksenSisalto;
 import salipaivakirja.Harjoitus;
+import salipaivakirja.Liike;
 import salipaivakirja.SailoException;
 import salipaivakirja.Spvk;
 
@@ -51,6 +52,11 @@ public class SalipaivakirjaGUIController implements Initializable {
     private void etsi() {
         hae(0);
     }
+    
+    @FXML
+    private void handlePoistaLiike() {
+        poistaLiike();
+    }
 
 
     /**
@@ -59,24 +65,6 @@ public class SalipaivakirjaGUIController implements Initializable {
     @FXML
     private void handleUusiMerkinta() {
         uusiMerkinta();
-    }
-
-
-    /**
-     * Käsitellään uuden merkinn�n lisääminen
-     */
-    @FXML
-    private void handleUusiMerkintaTemp() {
-        uusiMerkintaTemp();
-    }
-
-
-    /**
-     * Käsitellään vertaa
-     */
-    @FXML
-    private void handleVertaa() {
-        Dialogs.showMessageDialog("Ei osata");
     }
 
 
@@ -126,6 +114,7 @@ public class SalipaivakirjaGUIController implements Initializable {
     // ======================================================================
     Spvk spvk;
     private Harjoitus harjKohdalla;
+    private Liike liikeKohdalla;
 
     /**
      * Tietojen tallennus
@@ -140,7 +129,7 @@ public class SalipaivakirjaGUIController implements Initializable {
 
 
     /**
-     * Tarkistetaan onko tallennus tehty
+     * tallennetaan tiedosto ennen sulkemista
      * @return true jos saa sulkaa sovelluksen, false jos ei
      */
     public boolean voikoSulkea() {
@@ -155,7 +144,11 @@ public class SalipaivakirjaGUIController implements Initializable {
      */
     private void uusiMerkinta() {
         SpvkHarjoitusController.uusiMerkinta(null, spvk);
-        hae(spvk.viimeisinHarjoitusID());
+        try {
+            hae(spvk.viimeisinHarjoitusID());
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog("ongelmia harjoituksen löytämisessä"+e.getMessage());
+        }
     }
     
     
@@ -166,10 +159,33 @@ public class SalipaivakirjaGUIController implements Initializable {
     private void muokkaaMerkintaa() {
         SpvkHarjoitusController.muokkaaMerkintaa(null, spvk,
                 harjKohdalla.getharj_id());
-        hae(spvk.viimeisinHarjoitusID());
+        try {
+            hae(spvk.viimeisinHarjoitusID());
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog("ongelmia harjoituksen löytämisessä"+e.getMessage());
+        }
     }
 
+    
+    /**
+     * poistetaan liike
+     */
+    private void poistaLiike() {
+        try {
+            if (spvk.liikeHistoriaTiedostona(liikeKohdalla.getID())
+                    .length() == 1) {
+                spvk.poistaLiike(liikeKohdalla.getID());
+                hae(0);
+                return;
+            }
 
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog(
+                    "ongelmia liikkeen poistossa " + e.getMessage());
+        }
+        Dialogs.showMessageDialog(
+                "Liiketta ei voi poistaa, koska se sisältyy ainakin yhteen harjoitukseen.");
+    }
 
 
     /**
@@ -274,7 +290,7 @@ public class SalipaivakirjaGUIController implements Initializable {
         if (Character.isDigit(liike.getString().charAt(0)))
             return; // katsotaan alkaako objektin merkkijono numerolla ja jos ei
                     // niin kyseessa on liike eika treeni.
-
+        liikeKohdalla = (Liike) liike;
         stringGridLiike.clear();
         int liike_id = liike.getID();
         try {
@@ -284,22 +300,6 @@ public class SalipaivakirjaGUIController implements Initializable {
         } catch (SailoException e) {
             Dialogs.showMessageDialog(e.getMessage());
         }
-    }
-
-
-    /**
-     * generoidaan uusi merkinta ja lisataan se listalle
-     */
-    private void uusiMerkintaTemp() {
-        Harjoitus harj = new Harjoitus();
-        spvk.lisaa(harj);
-        int r = Rng.rand(2, 5);
-        for (int i = 0; i < r; i++) {
-            HarjoituksenSisalto harjsis = new HarjoituksenSisalto(
-                    harj.getharj_id());
-            spvk.lisaa(harjsis);
-        }
-        hae(harj.getharj_id());
     }
 
 

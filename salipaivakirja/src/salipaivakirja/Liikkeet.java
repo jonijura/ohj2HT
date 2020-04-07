@@ -46,6 +46,37 @@ public class Liikkeet implements Iterable<Liike> {
         alkiot[lkm] = liike;
         lkm++;
     }
+    
+
+    /**
+     * poistetaan liike id:ta vastaava liike
+     * @param id poistettavan liikkeen liikeID
+     * @return poistettiinko mitaan
+     * @example
+     * <pre name="test">
+     * var l = new Liikkeet();
+     * l.lisaa(new Liike());
+     * var li = new Liike();
+     * l.lisaa(li);
+     * int a = l.getlkm();
+     * l.poista(li.getID())===true;
+     * a-l.getlkm()===1;
+     * l.annaLiike(li.getID()); #THROWS SailoException
+     * </pre>
+     */
+    public boolean poista(int id) {
+        int poistettu = 0;
+        for(int i=0; i<lkm; i++) {
+            if(alkiot[i].getID()==id) {
+                poistettu++;
+                continue;
+            }
+            alkiot[i-poistettu]=alkiot[i];
+        }
+        lkm-=poistettu;
+        return poistettu>0;
+        
+    }
 
 
     /**
@@ -96,14 +127,12 @@ public class Liikkeet implements Iterable<Liike> {
      * l.annaLiike(2).getLiikkeenNimi()==="karrynpyora";
      * </pre>
      */
-    public Liike annaLiike(int liike_id) throws SailoException{
+    public Liike annaLiike(int liike_id) throws SailoException {
         for (int i = 0; i < lkm; i++)
             if (alkiot[i].getLiike_id() == liike_id)
                 return alkiot[i];
-        throw new SailoException("ei löytynyt liikettä id="+liike_id);
+        throw new SailoException("ei löytynyt liikettä id=" + liike_id);
     }
-
-
 
 
     /**
@@ -112,38 +141,40 @@ public class Liikkeet implements Iterable<Liike> {
      * @throws SailoException jos ei aukuea
      */
     public void tallenna(String tiedNimi) throws SailoException {
-        try (PrintStream fo = new PrintStream(new FileOutputStream(tiedNimi, false))) {
+        try (PrintStream fo = new PrintStream(
+                new FileOutputStream(tiedNimi, false))) {
             for (int i = 0; i < lkm; i++) {
                 fo.println(anna(i).toString());
             }
         } catch (FileNotFoundException ex) {
-            System.err.println("Tiedosto ei aukea: " + ex.getMessage());
             throw new SailoException("Tiedosto " + tiedNimi + " ei aukea");
         }
-        
+
     }
 
-    
-    
+
     /**
      * @param s liikkeen nimi
      * @return liikkeen id, -1 jos ei löydy
      * @example
      * <pre name="test">
      * Liikkeet l = new Liikkeet();
-     * l.lisaa(new Liike("kuperkeikka",true));
-     * l.onkoUusi("kuperkeikka")===false;
-     * l.onkoUusi(" Kuperkeikka  ")===false;
-     * l.onkoUusi("kuperke ikka")===true;
+     * Liike li =  new Liike("kuperkeikka",true);
+     * l.lisaa(li);
+     * l.onkoUusi("kuperkeikka")===li.getID();
+     * l.onkoUusi(" Kuperkeikka  ")===li.getID();
+     * l.onkoUusi("markus")===-1;
      * </pre>
      */
-    public int onkoUusi(String s){
+    public int onkoUusi(String s) {
         String st = s.trim();
-        for(int i=0;i<lkm;i++) {
+        for (int i = 0; i < lkm; i++) {
             try {
-                if(anna(i).getLiikkeenNimi().equalsIgnoreCase(st))return anna(i).getID();
+                if (anna(i).getLiikkeenNimi().equalsIgnoreCase(st))
+                    return anna(i).getID();
             } catch (SailoException e) {
-                e.printStackTrace();
+                // ei voi tapahtua. foreach loopin kayttaminen ei heittaisi
+                // poikkeusta, mutta aiheuttaa kasittamattomia ongelmia
             }
         }
         return -1;
@@ -188,8 +219,11 @@ public class Liikkeet implements Iterable<Liike> {
      * </pre>
      */
     public void lueTiedosto(String tiedNimi) throws SailoException {
-        try (Scanner fi = new Scanner(new FileInputStream(new File(tiedNimi)))) { // Jotta UTF8/ISO-8859 toimii
-            while ( fi.hasNext() ) {
+        try (Scanner fi = new Scanner(
+                new FileInputStream(new File(tiedNimi)))) { // Jotta
+                                                            // UTF8/ISO-8859
+                                                            // toimii
+            while (fi.hasNext()) {
                 try {
                     String s = fi.nextLine();
                     var liike = new Liike();
@@ -200,33 +234,33 @@ public class Liikkeet implements Iterable<Liike> {
                 }
             }
         } catch (FileNotFoundException ex) {
-            System.err.println("Tiedosto ei aukea! " + ex.getMessage());
             throw new SailoException("Tiedosto " + tiedNimi + " ei aukea");
         }
-       
-        
+
     }
-    
+
     /**
      * iteraattori liikkeille
      * @author Joona1
      * @version 24.3.2020
      *
      */
-    public class LiikeIterator implements Iterator<Liike>{
+    public class LiikeIterator implements Iterator<Liike> {
         private int kohdalla = 0;
+
         @Override
         public boolean hasNext() {
-            return kohdalla<lkm;
+            return kohdalla < lkm;
         }
+
 
         @Override
         public Liike next() {
             return alkiot[kohdalla++];
         }
-        
+
     }
-    
+
     /**
      * Palautetaan iteraattori liikkeille.
      * @return liike iteraattori
@@ -236,7 +270,6 @@ public class Liikkeet implements Iterable<Liike> {
         return new LiikeIterator();
     }
 
-    
 
     /**
      * @param args ei kaytossa
@@ -252,25 +285,22 @@ public class Liikkeet implements Iterable<Liike> {
 
         for (int i = 0; i < 5; i++) {
             Liike liike = new Liike();
-            liike.rekisteroi();
             liike.taytaLiikeTiedoilla();
             liikkeet.lisaa(liike);
         }
         System.out.println(liikkeet.taulukonKoko());
 
         System.out.println("==============Liikkeet testi==========");
-        try {
 
-        for (int i = 0; i < liikkeet.getlkm(); i++) {
-            Liike liike = liikkeet.anna(i);
-            System.out.println("liikkeen nro: " + i);
-            liike.tulosta(System.out);
-        }
-        liikkeet.annaLiike(3).tulosta(System.out);
-        }catch (SailoException e) {
-            e.getMessage();
-        }
+        for (Liike l : liikkeet)
+            l.tulosta(System.out);
+
+        for (Liike l : liikkeet)
+            System.out.println(l.getLiikkeenNimi());
+        liikkeet.poista(1);
+        liikkeet.poista(7);
+        for (Liike l : liikkeet)
+            System.out.println(l.getLiikkeenNimi());
+
     }
-
-
 }

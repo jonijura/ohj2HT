@@ -46,9 +46,9 @@ public class Liike implements RekisteroituMerkkijono {
      * @example
      * <pre name="test">
      * Liike l1 = new Liike();
-     * l1.parse("3|kuperkeikka");
+     * l1.parse("15|kuperkeikka");
      * l1.getLiikkeenNimi()==="kuperkeikka";
-     * l1.getLiike_id()===3;
+     * l1.getLiike_id()===15;
      * Liike l2 = new Liike();
      * l2.getLiike_id()-l1.getLiike_id()===1;
      * l1.parse("");

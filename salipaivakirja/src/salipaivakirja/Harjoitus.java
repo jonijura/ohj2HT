@@ -114,8 +114,8 @@ public class Harjoitus implements RekisteroituMerkkijono{
      * @example
      * <pre name="test">
      * Harjoitus harj = new Harjoitus();
-     * harj.parse("4|1.2.2020");
-     * harj.toString()==="4|1.2.2020";
+     * harj.parse("20|1.2.2020");
+     * harj.toString()==="20|1.2.2020";
      * Harjoitus harj2 = new Harjoitus();
      * harj2.getID()-harj.getID()===1;
      * </pre>

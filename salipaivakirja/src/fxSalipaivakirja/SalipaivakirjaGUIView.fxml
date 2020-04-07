@@ -12,10 +12,8 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -35,7 +33,6 @@
           <Menu mnemonicParsing="false" text="Tiedosto">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleTallenna" text="Tallenna" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleVertaa" text="Vertaa..." />
                   <MenuItem mnemonicParsing="false" onAction="#handleLopeta" text="Lopeta" />
             </items>
           </Menu>
@@ -43,6 +40,7 @@
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleUusiMerkinta" text="Uusi merkintä..." />
                   <MenuItem mnemonicParsing="false" onAction="#handleMuokkaaMerkintaa" text="Muokkaa merkintää..." />
+                  <MenuItem mnemonicParsing="false" onAction="#handleMuokkaaMerkintaa" text="Poista liike..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Apua">
@@ -71,7 +69,7 @@
                   <Insets />
                </VBox.margin>
             </ListChooser>
-            <Button onAction="#handleUusiMerkintaTemp" text="_Uusi merkintä">
+            <Button onAction="#handleUusiMerkinta" text="_Uusi merkintä">
                <VBox.margin>
                   <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                </VBox.margin></Button>
@@ -135,19 +133,16 @@
       <VBox BorderPane.alignment="CENTER">
          <children>
             <Label alignment="CENTER" prefHeight="17.0" prefWidth="337.0" text="Liikkeen harjoitushistoria" />
-            <ScrollPane>
-              <content>
-                <AnchorPane>
-                     <children>
-                        <StringGrid fx:id="stringGridLiike" rivit="kyykky|sarjoja|toistoja|paino&#10;15.1|4|8|90&#10;9.1|3|12|80&#10;3.1|4|10|80&#10;">
-                           <columnResizePolicy>
-                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                           </columnResizePolicy>
-                        </StringGrid>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </ScrollPane>
+            <StringGrid fx:id="stringGridLiike" rivit="kyykky|sarjoja|toistoja|paino&#10;15.1|4|8|90&#10;9.1|3|12|80&#10;3.1|4|10|80&#10;">
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </StringGrid>
+            <Button onAction="#handlePoistaLiike" mnemonicParsing="false" text="Poista LIike">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </Button>
          </children>
       </VBox>
    </right>

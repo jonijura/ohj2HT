@@ -4,9 +4,10 @@
 package salipaivakirja;
 
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.Collections;
 
 import javafx.collections.ObservableList;
+import kanta.Pvm;
 import kanta.RekisteroituMerkkijono;
 
 /**
@@ -131,21 +132,6 @@ public class Spvk {
 
     /**
      * @param harj_id harjoitus id
-     * @return lista harjsis joilla haluttu id
-     */
-    public Stack<HarjoituksenSisalto> getharjsis(int harj_id) {
-        var palautus = new Stack<HarjoituksenSisalto>();
-        for (HarjoituksenSisalto hs : harjsis) {
-            if (hs.getHarj_id() == harj_id) {
-                palautus.add(hs);
-            }
-        }
-        return palautus;
-    }
-
-
-    /**
-     * @param harj_id harjoitus id
      * @return harjoituksen sisallon lkm talla id:lla
      */
     public int getharjsislkm(int harj_id) {
@@ -216,8 +202,17 @@ public class Spvk {
      * tiedostosta
      * @param s liikkeen nimi
      * @return virhe
+     * @example
+     * <pre name="test">
+     * Spvk spvk = new Spvk();
+     * Liike li =  new Liike("kuperkeikka",true);
+     * spvk.lisaa(li);
+     * spvk.tarkistaLiike("kuperkeikka")===null;
+     * spvk.tarkistaLiike(" Kuperkeikka  ")===null;
+     * spvk.tarkistaLiike("markus")==="UusiLiike: \"markus\"";     
+     * </pre>
      */
-    public String TarkistaLiike(String s) {
+    public String tarkistaLiike(String s) {
         if(s.contains("|"))return "Liikkeen nimessä vääriä merkkejä";
         if(liikkeet.onkoUusi(s)<0)return "UusiLiike: \""+s+"\"";
         return null;
@@ -240,6 +235,7 @@ public class Spvk {
      * spvk.lisaa(hs);
      * spvk.getHarjsislkm()===1;
      * spvk.poistaHarjoitus(h.getID());
+     * spvk.poistaHarjoitus(1);
      * spvk.getHarjoitustenlkm()===0;
      * spvk.getHarjsislkm()===0;
      * </pre>
@@ -247,6 +243,14 @@ public class Spvk {
     public void poistaHarjoitus(int id) throws SailoException {
         harjoitukset.poista(id);
         harjsis.poistaKaikki(id);
+    }
+    
+    
+    /**
+     * @param id poistettavan liikkeen liike id
+     */
+    public void poistaLiike(int id) {
+        liikkeet.poista(id);
     }
 
 
@@ -274,6 +278,7 @@ public class Spvk {
 
 
     /**
+     * kerrotaan kaikkien tiedostossa olevien liikkeiden nimet
      * @param list lista johon liikkeiden nimet kerataan
      */
     public void lisaaLiikkeet(ObservableList<String> list) {
@@ -282,19 +287,14 @@ public class Spvk {
     }
     
     
-
     /**
      * @return viimeisimpänä lisatyn harjoituksen harjId
+     * @throws SailoException jos harjoitusta ei loydy
      */
-    public int viimeisinHarjoitusID() {
-        try {
-            return harjoitukset.anna(harjoitukset.getlkm()-1).getharj_id();
-        } catch (SailoException e) {
-            //ei tule tapahtumaan
-        }
-        return 1;
-    }
+    public int viimeisinHarjoitusID() throws SailoException {
+        return harjoitukset.anna(harjoitukset.getlkm() - 1).getharj_id();
 
+    }
 
 
 
@@ -309,14 +309,28 @@ public class Spvk {
     
     
     /**
-     * @param hakuehto .
+     * etsii hakuehtoa vastaavan sisallon ja palauttaa sen jarjestettyna
+     * @param hakuehto etsittava merkkijono
      * @return hakuehtoa vastaavat oliot
+     * @example
+     * <pre name="test">
+     * Spvk spvk = new Spvk();
+     * spvk.lisaa(new Liike("penkkipunnerrus", false));
+     * spvk.lisaa(new Liike("pystypunnerrus", false));
+     * spvk.etsi("punnerrus").size()===2;
+     * spvk.etsi("kki").size()===1;
+     * spvk.etsi("a").size()===0;
+     * </pre>
      */
     public ArrayList<RekisteroituMerkkijono> etsi(String hakuehto) {
-        ArrayList<RekisteroituMerkkijono> sisalto = new ArrayList<>();
-        for(Liike l: liikkeet)if(l.getString().toLowerCase().contains(hakuehto.toLowerCase().trim()))sisalto.add(l);
-        for(Harjoitus h: harjoitukset)if(h.getString().contains(hakuehto.trim()))sisalto.add(h);
-        return sisalto;
+        ArrayList<RekisteroituMerkkijono> liikeNimet = new ArrayList<>();
+        for(Liike l: liikkeet)if(l.getString().toLowerCase().contains(hakuehto.toLowerCase().trim()))liikeNimet.add(l);
+        Collections.sort(liikeNimet, new RekisteroituMerkkijono.Vertailija());
+        ArrayList<RekisteroituMerkkijono> paivamaarat = new ArrayList<>();
+        for(Harjoitus h: harjoitukset)if(h.getString().contains(hakuehto.trim()))paivamaarat.add(h);
+        Collections.sort(paivamaarat, new Pvm.Vertailija());
+        liikeNimet.addAll(paivamaarat);
+        return liikeNimet;
     }
 
 

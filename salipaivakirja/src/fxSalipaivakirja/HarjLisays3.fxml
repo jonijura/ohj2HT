@@ -32,8 +32,8 @@
                   <TextField fx:id="textFieldPVM" promptText="3.4.2020" />
                </children>
             </HBox>
-            <Label fx:id="labelVaroitus" alignment="CENTER" prefHeight="17.0" prefWidth="618.0" text="Label" VBox.vgrow="ALWAYS" />
-            <Label fx:id="labelVirhe" alignment="CENTER" prefWidth="711.0" text="okok" />
+            <Label fx:id="labelVaroitus" alignment="CENTER" prefHeight="17.0" prefWidth="618.0" text="" VBox.vgrow="ALWAYS" />
+            <Label fx:id="labelVirhe" alignment="CENTER" prefWidth="711.0" text="" />
             <ButtonBar prefHeight="40.0" prefWidth="200.0">
               <buttons>
                 <Button mnemonicParsing="false" onAction="#HandleOK" text="OK" />

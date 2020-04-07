@@ -1,12 +1,14 @@
 package fxSalipaivakirja;
 
 import java.net.URL;
+
 import java.util.ResourceBundle;
 
 import fi.jyu.mit.fxgui.Dialogs;
 import fi.jyu.mit.fxgui.ModalController;
 import fi.jyu.mit.fxgui.ModalControllerInterface;
 import fi.jyu.mit.ohj2.Mjonot;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -93,7 +95,7 @@ public class SpvkHarjoitusController
     private static int muokattavaHarjID;
 
     /**
-     * alustetaan dialogi, jossa on kayttajan pyytama maara kenttia liikkeille
+     * alustetaan dialogi harjoituksen muokkaukselle tai uuden luomiselle
      */
     private void alusta() {
         textAreaHarjSis.setOnKeyReleased(e -> kasitteleMuutos((TextArea)(e.getSource())));
@@ -104,7 +106,7 @@ public class SpvkHarjoitusController
     }
 
     /**
-     * kutsutaan kun pvm syottokenttaa on muutettu
+     * kutsutaan kun pvm syottokenttaa on muutettu. tarkastaa kentan oikeellisuuden ja ilmoittaa mahdollisista virheista.
      * @param textField muutettu kentta
      */
     private boolean kasitteleMuutos(TextField pvmTxt) {
@@ -113,8 +115,10 @@ public class SpvkHarjoitusController
             labelVirhe.setText("");
             labelVirhe.getStyleClass().clear();
             textFieldPVM.getStyleClass().clear();
+            Dialogs.setToolTipText(textFieldPVM ,"");
             return false;
         }
+        Dialogs.setToolTipText(textFieldPVM ,virhe);
         labelVirhe.setText(virhe);
         labelVirhe.getStyleClass().add("virhe");
         textFieldPVM.getStyleClass().add("virhe");
@@ -123,7 +127,7 @@ public class SpvkHarjoitusController
 
 
     /**
-     * kutsutaan kun harjsis syottokenttaa on muutettu.
+     * kutsutaan kun harjsis syottokenttaa on muutettu. tarkastaa kentan oikeellisuuden ja ilmoittaa mahdollisista virheista.
      * @param textArea muutettu kentta
      */
     private boolean kasitteleMuutos(TextArea harjSisTxt) {
@@ -132,7 +136,7 @@ public class SpvkHarjoitusController
         boolean varoituksia=false;
         for(int i=0;i<sisalto.length;i++) {
             if(i%4==0) {
-                virhe = spvk.TarkistaLiike(sisalto[i]);
+                virhe = spvk.tarkistaLiike(sisalto[i]);
                 if(virhe!=null&&virhe.length()!=0) {
                     if(virhe.charAt(0)=='U') {
                         labelVaroitus.setText(virhe);
@@ -142,6 +146,7 @@ public class SpvkHarjoitusController
                     else {
                         labelVirhe.setText(virhe);
                         labelVirhe.getStyleClass().add("virhe");
+                        Dialogs.setToolTipText(textAreaHarjSis,virhe);
                         return true;
                     }
                 }
@@ -149,14 +154,16 @@ public class SpvkHarjoitusController
             else if(!sisalto[i].equals(Integer.toString(Mjonot.erotaInt(sisalto[i], 0)))) {
                 labelVirhe.getStyleClass().add("virhe");
                 labelVirhe.setText("Paikassa, jossa pitäisi olla numero onkin \""+sisalto[i] +"\"");
+                Dialogs.setToolTipText(textAreaHarjSis,"kirjoita liikkeen nimi yhteen");
                 return true;
             } 
         }
-        labelVirhe.setText(""+sisalto.length);
+        labelVirhe.setText("");
         labelVirhe.getStyleClass().clear();
         textAreaHarjSis.getStyleClass().clear();
+        Dialogs.setToolTipText(textAreaHarjSis,"");
         if(varoituksia)return false;
-        labelVaroitus.setText(""+sisalto.length);
+        labelVaroitus.setText("");
         labelVaroitus.getStyleClass().clear();
         return false;
     }
@@ -206,7 +213,7 @@ public class SpvkHarjoitusController
 
 
     /**
-     * poista painettu, poistetaan harj tiedot
+     * poista painettu, poistetaan harjoituksen tiedot
      */
     private void kasittelePoista() {
         try {
@@ -240,8 +247,8 @@ public class SpvkHarjoitusController
         if(sb==null||sb.length()==0)return;
         sb.deleteCharAt(0);
         while(sb.indexOf("|")>0)sb.replace(sb.indexOf("|"), sb.indexOf("|")+1, " ");
-        textAreaHarjSis.setText(sb.toString());
         
+        textAreaHarjSis.setText(sb.toString());
     }
 
 
