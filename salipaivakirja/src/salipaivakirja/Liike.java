@@ -10,7 +10,8 @@ import java.io.PrintStream;
 import fi.jyu.mit.ohj2.Mjonot;
 
 /**
- * @author Joona1
+ * luokka yksittaiselle liikkeelle
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 17.2.2020
  *
  */

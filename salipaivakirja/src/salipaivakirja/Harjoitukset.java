@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * @author Joona1
+ * luokka harjoituksille
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 18.2.2020
  *
  */

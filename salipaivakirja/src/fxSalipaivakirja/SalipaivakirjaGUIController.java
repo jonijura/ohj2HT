@@ -25,9 +25,10 @@ import java.util.ResourceBundle;
 import fi.jyu.mit.fxgui.*;
 
 /**
- * luokka käyttöliittymän tapahtumien hoitamiseksi
+ * Luokka käyttöliittymän tapahtumien hoitamiseksi.
+ * Toteuttamatta kuvaajien piirtaminen.
  * 
- * @author Joona R�ty -jonijura
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 17.1.2020
  *
  */
@@ -56,6 +57,12 @@ public class SalipaivakirjaGUIController implements Initializable {
     @FXML
     private void handlePoistaLiike() {
         poistaLiike();
+    }
+
+    
+    @FXML
+    private void handlePoistaHarjoitus() {
+        poistaHarjoitus();
     }
 
 
@@ -144,11 +151,7 @@ public class SalipaivakirjaGUIController implements Initializable {
      */
     private void uusiMerkinta() {
         SpvkHarjoitusController.uusiMerkinta(null, spvk);
-        try {
-            hae(spvk.viimeisinHarjoitusID());
-        } catch (SailoException e) {
-            Dialogs.showMessageDialog("ongelmia harjoituksen löytämisessä"+e.getMessage());
-        }
+        haeJotainRuudulle(true);
     }
     
     
@@ -159,14 +162,28 @@ public class SalipaivakirjaGUIController implements Initializable {
     private void muokkaaMerkintaa() {
         SpvkHarjoitusController.muokkaaMerkintaa(null, spvk,
                 harjKohdalla.getharj_id());
-        try {
-            hae(spvk.viimeisinHarjoitusID());
-        } catch (SailoException e) {
-            Dialogs.showMessageDialog("ongelmia harjoituksen löytämisessä"+e.getMessage());
-        }
+        haeJotainRuudulle(true);
     }
 
     
+    /**
+     * haetaan naytolle joku harjoitus tai liike nakyville
+     * @param b haetaanko harjoitusta, jos false haetaan liike
+     */
+    private void haeJotainRuudulle(boolean b) {
+        String ehto = hakuKentta.getText();
+        hakuKentta.clear();
+        try {
+            if(b)
+            hae(spvk.viimeisinHarjoitusID());
+            else hae(0);
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog("ongelmia harjoituksen löytämisessä"+e.getMessage());
+        }
+        hakuKentta.setText(ehto);
+        hae(0);
+    }
+
     /**
      * poistetaan liike
      */
@@ -175,7 +192,7 @@ public class SalipaivakirjaGUIController implements Initializable {
             if (spvk.liikeHistoriaTiedostona(liikeKohdalla.getID())
                     .length() == 1) {
                 spvk.poistaLiike(liikeKohdalla.getID());
-                hae(0);
+                haeJotainRuudulle(false);
                 return;
             }
 
@@ -185,6 +202,20 @@ public class SalipaivakirjaGUIController implements Initializable {
         }
         Dialogs.showMessageDialog(
                 "Liiketta ei voi poistaa, koska se sisältyy ainakin yhteen harjoitukseen.");
+    }
+    
+    
+    /**
+     * kysytaan kayttajalta varmistus ja mahdollisesti poistetaan harjoitus sisaltoineen
+     */
+    private void poistaHarjoitus() {
+        if(!Dialogs.showQuestionDialog("Poista harjoitus", "haluatko poistaa harjoituksen "+harjKohdalla.getpvm(), "kyllä", "ei"))return;
+        try {
+            spvk.poistaHarjoitus(harjKohdalla.getID());
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog("harjoituksen poistossa ongelmia: "+e.getMessage());
+        }
+        haeJotainRuudulle(true);
     }
 
 

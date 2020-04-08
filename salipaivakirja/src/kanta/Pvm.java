@@ -5,7 +5,8 @@ import java.util.Comparator;
 import fi.jyu.mit.ohj2.Mjonot;
 
 /**
- * @author Joona1
+ * luokka erinaisille paivamaaraa kasitteleville asioille.
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 2.4.2020
  *
  */

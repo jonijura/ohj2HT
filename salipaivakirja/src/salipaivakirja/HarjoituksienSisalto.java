@@ -13,7 +13,8 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 /**
- * @author Joona1
+ * luokka kaikille harjoituksien sisalloille
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 18.2.2020
  *
  */

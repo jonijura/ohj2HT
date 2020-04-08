@@ -6,7 +6,8 @@ package kanta;
 import java.util.Comparator;
 
 /**
- * @author Joona1
+ * luokka merkkijonoille, joilla on juokseva id
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 7.3.2020
  *
  */

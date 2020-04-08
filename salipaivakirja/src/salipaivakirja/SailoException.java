@@ -4,7 +4,8 @@
 package salipaivakirja;
 
 /**
- * @author Joona1
+ * luokka tiedostojen sailomisessa ilmeneville poikkeuksille
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 17.2.2020
  *
  */

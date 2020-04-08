@@ -11,7 +11,8 @@ import kanta.RekisteroituMerkkijono;
 import kanta.Rng;
 
 /**
- * @author Joona1
+ * luokka yksittaiselle harjoitukselle
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 18.2.2020
  *
  */

@@ -40,7 +40,8 @@
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleUusiMerkinta" text="Uusi merkintä..." />
                   <MenuItem mnemonicParsing="false" onAction="#handleMuokkaaMerkintaa" text="Muokkaa merkintää..." />
-                  <MenuItem mnemonicParsing="false" onAction="#handleMuokkaaMerkintaa" text="Poista liike..." />
+                  <MenuItem mnemonicParsing="false" onAction="#handlePoistaLiike" text="Poista liike..." />
+                  <MenuItem mnemonicParsing="false" onAction="#handlePoistaHarjoitus" text="Poista harjoitus..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Apua">
@@ -138,11 +139,20 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </StringGrid>
-            <Button onAction="#handlePoistaLiike" mnemonicParsing="false" text="Poista LIike">
-               <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </VBox.margin>
-            </Button>
+            <HBox>
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handlePoistaLiike" text="Poista Liike">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#handlePoistaHarjoitus" text="Poista Harjoitus">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
          </children>
       </VBox>
    </right>

@@ -9,7 +9,8 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 /**
- * @author Joona1
+ * luokka kaikille liikkeille
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 17.2.2020
  *
  */

@@ -25,7 +25,7 @@ import javafx.scene.control.TextArea;
 
 /**
  * Kontrolleri harjoituksen lisaamiselle (/muokkaukselle)
- * @author Joona1
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 10.2.2020
  *
  */
@@ -131,7 +131,7 @@ public class SpvkHarjoitusController
      * @param textArea muutettu kentta
      */
     private boolean kasitteleMuutos(TextArea harjSisTxt) {
-        String[] sisalto = harjSisTxt.getText().split("[ \n]+");
+        String[] sisalto = harjSisTxt.getText().split("[ \n\t]+");
         String virhe;
         boolean varoituksia=false;
         for(int i=0;i<sisalto.length;i++) {

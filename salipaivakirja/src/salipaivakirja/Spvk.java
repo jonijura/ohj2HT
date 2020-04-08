@@ -11,7 +11,8 @@ import kanta.Pvm;
 import kanta.RekisteroituMerkkijono;
 
 /**
- * @author Joona1
+ * luokka joka hoitaa ohjelman muiden luokkien ja kayttoliittyman valista yhteistyota
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 17.2.2020
  *
  */
@@ -324,10 +325,12 @@ public class Spvk {
      */
     public ArrayList<RekisteroituMerkkijono> etsi(String hakuehto) {
         ArrayList<RekisteroituMerkkijono> liikeNimet = new ArrayList<>();
-        for(Liike l: liikkeet)if(l.getString().toLowerCase().contains(hakuehto.toLowerCase().trim()))liikeNimet.add(l);
+        for(Liike l: liikkeet)if(l.getString().toLowerCase().startsWith(hakuehto.toLowerCase().trim()))liikeNimet.add(l);
         Collections.sort(liikeNimet, new RekisteroituMerkkijono.Vertailija());
         ArrayList<RekisteroituMerkkijono> paivamaarat = new ArrayList<>();
-        for(Harjoitus h: harjoitukset)if(h.getString().contains(hakuehto.trim()))paivamaarat.add(h);
+        for(Harjoitus h: harjoitukset)if(h.getString().startsWith(hakuehto.trim()))paivamaarat.add(h);
+        if(paivamaarat.size()==0)
+            for(Harjoitus h: harjoitukset)if(h.getString().contains(hakuehto.trim())&&!h.getString().startsWith(hakuehto.trim()))paivamaarat.add(h);
         Collections.sort(paivamaarat, new Pvm.Vertailija());
         liikeNimet.addAll(paivamaarat);
         return liikeNimet;

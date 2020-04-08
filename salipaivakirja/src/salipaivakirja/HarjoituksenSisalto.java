@@ -9,7 +9,8 @@ import fi.jyu.mit.ohj2.Mjonot;
 import kanta.Rng;
 
 /**
- * @author Joona1
+ * luokka saliharjoituksien sisalloille
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 17.2.2020
  *
  */

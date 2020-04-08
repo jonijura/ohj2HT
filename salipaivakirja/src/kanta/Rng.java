@@ -1,8 +1,9 @@
 package kanta;
 
 /**
+ * satunnaislukugeneraattori
  * random number generator
- * @author Joona1
+ * @author Joona Räty -jonijura jonijura@student.jyu.fi
  * @version 1.3.2020
  *
  */

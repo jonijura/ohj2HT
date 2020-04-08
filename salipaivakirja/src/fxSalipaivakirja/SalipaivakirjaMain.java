@@ -9,7 +9,11 @@ import javafx.scene.layout.Pane;
 
 
 /**
- * @author Joona R�ty -jonijura
+ * Rekisteri saliharjoituksille, johon voit tallentaa harjoituksien sisallon seka
+ * hakea aiempia harjoituksia ja liikkeiden harjoitus historiaa.
+ * 
+ * Toteuttamatta kuvaajien piirtaminen.
+ * @author Joona R�ty -jonijura jonijura@student.jyu.fi
  * @version 17.1.2020
  *
  */
