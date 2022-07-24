@@ -19,7 +19,9 @@ import kanta.RekisteroituMerkkijono;
 public class Spvk {
 
     private final Liikkeet liikkeet = new Liikkeet();
+
     private final Harjoitukset harjoitukset = new Harjoitukset();
+
     private final HarjoituksienSisalto harjsis = new HarjoituksienSisalto();
 
     /**
@@ -167,22 +169,24 @@ public class Spvk {
      * spvk.lisaa(new HarjoituksenSisalto(t2));
      * spvk.lisaa(new HarjoituksenSisalto(t3));
      * spvk.lisaa(new HarjoituksenSisalto(t4));
-     * spvk.liikeHistoriaTiedostona(1).length()===51;
+     * spvk.liikeHistoriaTiedostona(1).length()===50;
      * spvk.harjsisTiedostona(1).length()===40;
      * </pre>
      */
     public String liikeHistoriaTiedostona(int liike_id) throws SailoException {
-        StringBuilder sb = new StringBuilder("\n");
+        StringBuilder sb = new StringBuilder("");
         for (HarjoituksenSisalto hs : harjsis) {
             if (hs.getLiike_id() == liike_id) {
 
-                String pvm = harjoitukset
-                        .annaHarjoitus(hs.getHarj_id()).getpvm();
+                String pvm = harjoitukset.annaHarjoitus(hs.getHarj_id())
+                        .getpvm();
                 sb.append(pvm);
                 sb.append(hs.tiedostona());
                 sb.append("\n");
             }
         }
+        if (sb.length() != 0)
+            sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
 
@@ -192,10 +196,9 @@ public class Spvk {
      * @param s liikkeen nimi
      * @return liikkeen paikka, -1 jos ei loydy
      */
-    public int onkoUusiLiike(String s){
+    public int onkoUusiLiike(String s) {
         return liikkeet.onkoUusi(s);
     }
-    
 
 
     /**
@@ -214,12 +217,13 @@ public class Spvk {
      * </pre>
      */
     public String tarkistaLiike(String s) {
-        if(s.contains("|"))return "Liikkeen nimessä vääriä merkkejä";
-        if(liikkeet.onkoUusi(s)<0)return "UusiLiike: \""+s+"\"";
+        if (s.contains("|"))
+            return "Liikkeen nimessä vääriä merkkejä";
+        if (liikkeet.onkoUusi(s) < 0)
+            return "UusiLiike: \"" + s + "\"";
         return null;
     }
-    
-    
+
 
     /**
      * poistaa harjoitusid:ta vastaavan harjoituksen
@@ -245,8 +249,8 @@ public class Spvk {
         harjoitukset.poista(id);
         harjsis.poistaKaikki(id);
     }
-    
-    
+
+
     /**
      * @param id poistettavan liikkeen liike id
      */
@@ -286,8 +290,8 @@ public class Spvk {
         for (Liike l : liikkeet)
             list.add(l.getLiikkeenNimi());
     }
-    
-    
+
+
     /**
      * @return viimeisimpänä lisatyn harjoituksen harjId
      * @throws SailoException jos harjoitusta ei loydy
@@ -298,7 +302,6 @@ public class Spvk {
     }
 
 
-
     /**
      * @param id haettu id
      * @return harjoitus, jolla haettu id
@@ -307,8 +310,8 @@ public class Spvk {
     public Harjoitus annaHarjoitusID(int id) throws SailoException {
         return harjoitukset.annaHarjoitus(id);
     }
-    
-    
+
+
     /**
      * etsii hakuehtoa vastaavan sisallon ja palauttaa sen jarjestettyna
      * @param hakuehto etsittava merkkijono
@@ -318,24 +321,31 @@ public class Spvk {
      * Spvk spvk = new Spvk();
      * spvk.lisaa(new Liike("penkkipunnerrus", false));
      * spvk.lisaa(new Liike("pystypunnerrus", false));
-     * spvk.etsi("punnerrus").size()===2;
-     * spvk.etsi("kki").size()===1;
+     * spvk.etsi("p").size()===2;
+     * spvk.etsi("penk").size()===1;
      * spvk.etsi("a").size()===0;
      * </pre>
      */
     public ArrayList<RekisteroituMerkkijono> etsi(String hakuehto) {
         ArrayList<RekisteroituMerkkijono> liikeNimet = new ArrayList<>();
-        for(Liike l: liikkeet)if(l.getString().toLowerCase().startsWith(hakuehto.toLowerCase().trim()))liikeNimet.add(l);
+        for (Liike l : liikkeet)
+            if (l.getString().toLowerCase()
+                    .startsWith(hakuehto.toLowerCase().trim()))
+                liikeNimet.add(l);
         Collections.sort(liikeNimet, new RekisteroituMerkkijono.Vertailija());
         ArrayList<RekisteroituMerkkijono> paivamaarat = new ArrayList<>();
-        for(Harjoitus h: harjoitukset)if(h.getString().startsWith(hakuehto.trim()))paivamaarat.add(h);
-        if(paivamaarat.size()==0)
-            for(Harjoitus h: harjoitukset)if(h.getString().contains(hakuehto.trim())&&!h.getString().startsWith(hakuehto.trim()))paivamaarat.add(h);
+        for (Harjoitus h : harjoitukset)
+            if (h.getString().startsWith(hakuehto.trim()))
+                paivamaarat.add(h);
+        if (paivamaarat.size() == 0)
+            for (Harjoitus h : harjoitukset)
+                if (h.getString().contains(hakuehto.trim())
+                        && !h.getString().startsWith(hakuehto.trim()))
+                    paivamaarat.add(h);
         Collections.sort(paivamaarat, new Pvm.Vertailija());
         liikeNimet.addAll(paivamaarat);
         return liikeNimet;
     }
-
 
 
     /**
@@ -374,5 +384,17 @@ public class Spvk {
         } catch (SailoException e) {
             e.getMessage();
         }
+    }
+
+
+    /**
+     * @param liike etsittävä liike
+     * @return liikkeen harjoitushistoria
+     * @throws SailoException ei pitäisi...
+     */
+    public String liikkeenHarjLkmVuosittain(String liike)
+            throws SailoException {
+        int i = liikkeet.getLiikeID(liike);
+        return liikeHistoriaTiedostona(i);
     }
 }

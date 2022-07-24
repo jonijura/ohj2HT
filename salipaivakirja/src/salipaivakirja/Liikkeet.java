@@ -17,7 +17,9 @@ import java.util.Scanner;
 public class Liikkeet implements Iterable<Liike> {
 
     private static final int MAX_LIIKKEITA = 5;
+
     private int lkm = 0;
+
     // private String tiedostonNimi = "";
     private Liike[] alkiot = new Liike[MAX_LIIKKEITA];
 
@@ -47,7 +49,7 @@ public class Liikkeet implements Iterable<Liike> {
         alkiot[lkm] = liike;
         lkm++;
     }
-    
+
 
     /**
      * poistetaan liike id:ta vastaava liike
@@ -67,16 +69,16 @@ public class Liikkeet implements Iterable<Liike> {
      */
     public boolean poista(int id) {
         int poistettu = 0;
-        for(int i=0; i<lkm; i++) {
-            if(alkiot[i].getID()==id) {
+        for (int i = 0; i < lkm; i++) {
+            if (alkiot[i].getID() == id) {
                 poistettu++;
                 continue;
             }
-            alkiot[i-poistettu]=alkiot[i];
+            alkiot[i - poistettu] = alkiot[i];
         }
-        lkm-=poistettu;
-        return poistettu>0;
-        
+        lkm -= poistettu;
+        return poistettu > 0;
+
     }
 
 
@@ -247,6 +249,7 @@ public class Liikkeet implements Iterable<Liike> {
      *
      */
     public class LiikeIterator implements Iterator<Liike> {
+
         private int kohdalla = 0;
 
         @Override
@@ -303,5 +306,28 @@ public class Liikkeet implements Iterable<Liike> {
         for (Liike l : liikkeet)
             System.out.println(l.getLiikkeenNimi());
 
+    }
+
+
+    /**
+     * @param liike etsittävä liike
+     * @return liikkeen id, jos löytyi muuten -1
+     * @example
+     * <pre name="test">
+     * Liikkeet ll = new Liikkeet();
+     * Liike l1 = new Liike("kuperkeikka",true);
+     * Liike l2 = new Liike("karrynpyora", true);
+     * ll.lisaa(l1);
+     * ll.lisaa(l2);
+     * ll.getLiikeID("kuperkeikka")===l1.getID();
+     * ll.getLiikeID("kuperkeika")===-1;
+     * </pre>
+     */
+    public int getLiikeID(String liike) {
+        for (Liike l : this) {
+            if (l.getLiikkeenNimi() == liike)
+                return l.getID();
+        }
+        return -1;
     }
 }

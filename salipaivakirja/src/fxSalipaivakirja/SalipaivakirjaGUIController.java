@@ -1,28 +1,35 @@
 package fxSalipaivakirja;
 
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
-import kanta.*;
-import salipaivakirja.HarjoituksenSisalto;
-import salipaivakirja.Harjoitus;
-import salipaivakirja.Liike;
-import salipaivakirja.SailoException;
-import salipaivakirja.Spvk;
-
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
-import fi.jyu.mit.fxgui.*;
+import fi.jyu.mit.fxgui.Dialogs;
+import fi.jyu.mit.fxgui.ListChooser;
+import fi.jyu.mit.fxgui.StringGrid;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextField;
+import kanta.Pvm;
+import kanta.RekisteroituMerkkijono;
+import salipaivakirja.HarjoituksenSisalto;
+import salipaivakirja.Harjoitus;
+import salipaivakirja.Liike;
+import salipaivakirja.SailoException;
+import salipaivakirja.Spvk;
 
 /**
  * Luokka käyttöliittymän tapahtumien hoitamiseksi.
@@ -38,28 +45,40 @@ public class SalipaivakirjaGUIController implements Initializable {
 
     @FXML
     private ListChooser<RekisteroituMerkkijono> treeniValikko;
+
     @FXML
-    private ChoiceBox<String> kuvaaja1Valikko;
+    private ChoiceBox<String> harjoitusKerratValikko;
+
     @FXML
-    private ChoiceBox<String> kuvaaja2Valikko;
+    private ChoiceBox<String> maksimiPainoValikko;
+
     @FXML
     private StringGrid<HarjoituksenSisalto> stringGridTreeni;
+
     @FXML
     private StringGrid<HarjoituksenSisalto> stringGridLiike;
+
     @FXML
     private TextField hakuKentta;
+
+    @FXML
+    private BarChart<String, Integer> harjoitusKerratKuvaaja;
+
+    @FXML
+    private BarChart<String, Integer> maksimiPainoKuvaaja;
 
     @FXML
     private void etsi() {
         hae(0);
     }
-    
+
+
     @FXML
     private void handlePoistaLiike() {
         poistaLiike();
     }
 
-    
+
     @FXML
     private void handlePoistaHarjoitus() {
         poistaHarjoitus();
@@ -120,7 +139,9 @@ public class SalipaivakirjaGUIController implements Initializable {
     // ======================================================================
     // ======================================================================
     Spvk spvk;
+
     private Harjoitus harjKohdalla;
+
     private Liike liikeKohdalla;
 
     /**
@@ -143,8 +164,7 @@ public class SalipaivakirjaGUIController implements Initializable {
         tallenna();
         return true;
     }
-    
-    
+
 
     /**
      * luodaan uusi merkinta
@@ -153,8 +173,7 @@ public class SalipaivakirjaGUIController implements Initializable {
         SpvkHarjoitusController.uusiMerkinta(null, spvk);
         haeJotainRuudulle(true);
     }
-    
-    
+
 
     /**
      * muokataan merkintaa
@@ -165,7 +184,7 @@ public class SalipaivakirjaGUIController implements Initializable {
         haeJotainRuudulle(true);
     }
 
-    
+
     /**
      * haetaan naytolle joku harjoitus tai liike nakyville
      * @param b haetaanko harjoitusta, jos false haetaan liike
@@ -174,15 +193,18 @@ public class SalipaivakirjaGUIController implements Initializable {
         String ehto = hakuKentta.getText();
         hakuKentta.clear();
         try {
-            if(b)
-            hae(spvk.viimeisinHarjoitusID());
-            else hae(0);
+            if (b)
+                hae(spvk.viimeisinHarjoitusID());
+            else
+                hae(0);
         } catch (SailoException e) {
-            Dialogs.showMessageDialog("ongelmia harjoituksen löytämisessä"+e.getMessage());
+            Dialogs.showMessageDialog(
+                    "ongelmia harjoituksen löytämisessä" + e.getMessage());
         }
         hakuKentta.setText(ehto);
         hae(0);
     }
+
 
     /**
      * poistetaan liike
@@ -203,17 +225,21 @@ public class SalipaivakirjaGUIController implements Initializable {
         Dialogs.showMessageDialog(
                 "Liiketta ei voi poistaa, koska se sisältyy ainakin yhteen harjoitukseen.");
     }
-    
-    
+
+
     /**
      * kysytaan kayttajalta varmistus ja mahdollisesti poistetaan harjoitus sisaltoineen
      */
     private void poistaHarjoitus() {
-        if(!Dialogs.showQuestionDialog("Poista harjoitus", "haluatko poistaa harjoituksen "+harjKohdalla.getpvm(), "kyllä", "ei"))return;
+        if (!Dialogs.showQuestionDialog("Poista harjoitus",
+                "haluatko poistaa harjoituksen " + harjKohdalla.getpvm(),
+                "kyllä", "ei"))
+            return;
         try {
             spvk.poistaHarjoitus(harjKohdalla.getID());
         } catch (SailoException e) {
-            Dialogs.showMessageDialog("harjoituksen poistossa ongelmia: "+e.getMessage());
+            Dialogs.showMessageDialog(
+                    "harjoituksen poistossa ongelmia: " + e.getMessage());
         }
         haeJotainRuudulle(true);
     }
@@ -251,6 +277,8 @@ public class SalipaivakirjaGUIController implements Initializable {
 
         treeniValikko.addSelectionListener(e -> naytaTreeni());
         treeniValikko.addSelectionListener(e -> naytaLiike());
+        harjoitusKerratValikko.setOnAction(e -> naytaHarjoituskerrat());
+        maksimiPainoValikko.setOnAction(e -> naytaMaksimiPaino());
 
     }
 
@@ -269,12 +297,46 @@ public class SalipaivakirjaGUIController implements Initializable {
 
         spvk.lisaaLiikkeet(list);
 
-        kuvaaja1Valikko.setItems(list);
-        kuvaaja2Valikko.setItems(list);
-
+        harjoitusKerratValikko.setItems(list);
+        maksimiPainoValikko.setItems(list);
         // nayttaa jotain tietoja ruudulle
         hae(0);
         treeniValikko.setSelectedIndex(spvk.getLiikkeidenlkm());
+    }
+
+
+    private void naytaHarjoituskerrat() {
+        String[] dataS = { "" };
+        try {
+            String sisalto = spvk.liikkeenHarjLkmVuosittain(
+                    harjoitusKerratValikko.getValue());
+            if (sisalto.length() == 0)
+                return;
+            dataS = sisalto.split("\n");
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog(e.getMessage());
+            return;
+        }
+        var mp = new HashMap<Integer, Integer>();
+        for (String d : dataS) {
+            var vuosi = Pvm.getVuosi(d.split("\\|")[0]);
+            if (mp.containsKey(vuosi))
+                mp.replace(vuosi, mp.get(vuosi) + 1);
+            else
+                mp.put(vuosi, 1);
+        }
+        harjoitusKerratKuvaaja.getData().clear();
+        XYChart.Series<String, Integer> data = new Series<String, Integer>();
+        for (var et : mp.entrySet()) {
+            data.getData().add(new Data<String, Integer>(et.getKey().toString(),
+                    et.getValue()));
+        }
+        harjoitusKerratKuvaaja.getData().add(data);
+    }
+
+
+    private void naytaMaksimiPaino() {
+        // maksimiPainoKuvaaja.setTitle(maksimiPainoValikko.getValue());
     }
 
 
@@ -327,7 +389,7 @@ public class SalipaivakirjaGUIController implements Initializable {
         try {
             stringGridLiike.setRivit(
                     spvk.annaLiikkeenNimi(liike_id) + "|sarjoja|toistoja|paino"
-                            + spvk.liikeHistoriaTiedostona(liike_id));
+                            + "\n" + spvk.liikeHistoriaTiedostona(liike_id));
         } catch (SailoException e) {
             Dialogs.showMessageDialog(e.getMessage());
         }
@@ -339,14 +401,15 @@ public class SalipaivakirjaGUIController implements Initializable {
      * @param id liikkeen tai harjoituksen id
      */
     private void hae(int id) {
-        
+
         String hakuehto = hakuKentta.getText();
         ArrayList<RekisteroituMerkkijono> rml = spvk.etsi(hakuehto);
         treeniValikko.clear();
-        int paikka=0, index=0;
-        for(RekisteroituMerkkijono rm : rml) {
-            treeniValikko.add(rm.getString(),rm);
-            if(rm.getID()==id)index = paikka;
+        int paikka = 0, index = 0;
+        for (RekisteroituMerkkijono rm : rml) {
+            treeniValikko.add(rm.getString(), rm);
+            if (rm.getID() == id)
+                index = paikka;
             paikka++;
         }
         treeniValikko.setSelectedIndex(index);
